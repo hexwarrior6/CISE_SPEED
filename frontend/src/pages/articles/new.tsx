@@ -1,10 +1,21 @@
-// pages/articles/new.tsx (或你当前 NewDiscussion 组件的路径)
+// pages/articles/new.tsx (or your current NewDiscussion component's path)
 
 import { FormEvent, useState } from "react";
+import { useRouter } from 'next/router';
+import { useAuth } from '../../contexts/AuthContext';
 import formStyles from "../../styles/Form.module.scss";
 import { CreateArticleDto } from "../../types/article.types";
 
 const NewDiscussion = () => {
+  const router = useRouter();
+  const { token, isAuthenticated } = useAuth();
+
+  // Check if user is authenticated on initial render
+  if (typeof window !== 'undefined' && !isAuthenticated) {
+    router.push('/login');
+    return <div>Redirecting to login...</div>;
+  }
+
   // 根据后端 CreateArticleDto 定义状态
   const [customId, setCustomId] = useState("");
   const [title, setTitle] = useState("");
@@ -34,6 +45,7 @@ const NewDiscussion = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` }),
         },
         body: JSON.stringify(newArticle),
       });
