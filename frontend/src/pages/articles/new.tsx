@@ -1,11 +1,13 @@
-// pages/articles/new.tsx (或你当前 NewDiscussion 组件的路径)
+// pages/articles/new.tsx (or your current NewDiscussion component's path)
 
 import { FormEvent, useState } from "react";
+import { useRouter } from 'next/router';
+import { useAuth } from '../../contexts/AuthContext';
 import formStyles from "../../styles/Form.module.scss";
 import { CreateArticleDto } from "../../types/article.types";
 
 const NewDiscussion = () => {
-  // 根据后端 CreateArticleDto 定义状态
+  // Define all hooks first before any conditional returns
   const [customId, setCustomId] = useState("");
   const [title, setTitle] = useState("");
   const [authors, setAuthors] = useState(""); // 改为字符串，不是数组
@@ -14,6 +16,14 @@ const NewDiscussion = () => {
   const [doi, setDoi] = useState("");
   const [claim, setClaim] = useState(""); // 新增 claim 字段
   const [evidence, setEvidence] = useState(""); // 新增 evidence 字段
+  const router = useRouter();
+  const { token, isAuthenticated } = useAuth();
+
+  // Check if user is authenticated and redirect if not
+  if (typeof window !== 'undefined' && !isAuthenticated) {
+    router.push('/login');
+    return <div>Redirecting to login...</div>;
+  }
 
   const submitNewArticle = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -34,6 +44,7 @@ const NewDiscussion = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` }),
         },
         body: JSON.stringify(newArticle),
       });
