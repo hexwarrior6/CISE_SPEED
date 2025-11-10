@@ -17,15 +17,25 @@ const PopulatedNavBar = () => {
       <NavItem route="/" end>
         Home
       </NavItem>
-      <NavItem dropdown route="/articles">
-        Articles <IoMdArrowDropdown />
-        <NavDropdown>
-          <NavItem route="/articles">View articles</NavItem>
-          <NavItem route="/articles/new">Submit new</NavItem>
-        </NavDropdown>
+      <NavItem route="/search">
+        Search
       </NavItem>
-      {isAuthenticated ? (
+      {isAuthenticated && (
         <>
+          {/* Submitter link for submitters */}
+          {(user?.role === 'Submitter' || user?.role === 'Administrator') && (
+            <NavItem route="/submit">
+              Submit Article
+            </NavItem>
+          )}
+          
+          {/* Moderator link for moderators */}
+          {(user?.role === 'Moderator' || user?.role === 'Administrator') && (
+            <NavItem route="/moderator">
+              Moderate Articles
+            </NavItem>
+          )}
+          
           {/* Admin menu for administrators */}
           {user?.role === 'Administrator' && (
             <NavItem dropdown route="/admin">
@@ -46,7 +56,8 @@ const PopulatedNavBar = () => {
             </NavDropdown>
           </NavItem>
         </>
-      ) : (
+      )}
+      {!isAuthenticated && (
         <>
           <NavItem route="/login">Login</NavItem>
           <NavItem route="/register">Register</NavItem>

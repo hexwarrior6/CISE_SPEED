@@ -9,25 +9,27 @@ import {
   Param,
   Post,
   Put,
+  Query,
+  Request
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
-import { CreateArticleDto } from './create-article.dto';
+import { CreateArticleDto, ReviewArticleDto } from './create-article.dto';
+import { ArticleStatus } from './article.schema';
 
 @Controller('api/articles')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
-  // 测试路由
   @Get('/test')
-  test() {
-    return 'Article route is working!';
+  async test() {
+    return 'Article API is working';
   }
 
-  // 获取所有文章
+  // Get all articles with optional status filter
   @Get('/')
-  async findAll() {
+  async findAll(@Query('status') status?: ArticleStatus) {
     try {
-      return await this.articleService.findAll();
+      return await this.articleService.findAll(status);
     } catch (error) {
       throw new HttpException(
         {
@@ -40,7 +42,7 @@ export class ArticleController {
     }
   }
 
-  // 根据 customId 获取单篇文章
+  // Get single article by ID
   @Get('/:id')
   async findOne(@Param('id') id: string) {
     try {
@@ -61,17 +63,28 @@ export class ArticleController {
     }
   }
 
-  // 创建新文章
-  @Post('/')
-  async addArticle(@Body() createArticleDto: CreateArticleDto) {
+  // Submit new article (Submitter feature)
+  @Post('/submit')
+  async submitArticle(@Body() createArticleDto: CreateArticleDto, @Request() req) {
     try {
-      await this.articleService.create(createArticleDto);
-      return { message: 'Article added successfully' };
+      // Add submitter information from authenticated user
+      if (req.user) {
+        createArticleDto.submitterId = req.user._id;
+        createArticleDto.submitterEmail = req.user.email;
+      }
+      
+      const article = await this.articleService.submitArticle(createArticleDto);
+      
+      return {
+        message: 'Article submitted successfully',
+        article,
+        notification: 'Email notification will be sent when review is complete'
+      };
     } catch (error) {
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
-          error: 'Unable to add this article',
+          error: 'Unable to submit this article',
         },
         HttpStatus.BAD_REQUEST,
         { cause: error },
@@ -79,7 +92,7 @@ export class ArticleController {
     }
   }
 
-  // 更新文章
+  // Update article
   @Put('/:id')
   async updateArticle(
     @Param('id') id: string,
@@ -100,7 +113,103 @@ export class ArticleController {
     }
   }
 
-  // 删除文章
+  // Review article (Moderator feature)
+  @Post('/:id/review')
+  async reviewArticle(
+    @Param('id') id: string, 
+    @Body() reviewData: ReviewArticleDto, 
+    @Request() req
+  ) {
+    try {
+      // Get reviewer ID from authenticated user
+      const reviewerId = req.user?._id || 'system';
+      
+      const updatedArticle = await this.articleService.reviewArticle(
+        id, 
+        reviewData, 
+        reviewerId
+      );
+      
+      return {
+        message: 'Article reviewed successfully',
+        article: updatedArticle
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Unable to review this article',
+        },
+        HttpStatus.BAD_REQUEST,
+        { cause: error },
+      );
+    }
+  }
+
+  // Search articles (Searcher feature)
+  @Get('/search/advanced')
+  async searchArticles(
+    @Query('keywords') keywords: string, 
+    @Query('evidenceType') evidenceType?: string,
+    @Query('sortBy') sortBy: string = 'createdAt',
+    @Query('sortDirection') sortDirection: 'asc' | 'desc' = 'desc'
+  ) {
+    try {
+      return await this.articleService.searchArticles(
+        keywords, 
+        evidenceType,
+        sortBy,
+        sortDirection
+      );
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Unable to search articles',
+        },
+        HttpStatus.BAD_REQUEST,
+        { cause: error },
+      );
+    }
+  }
+
+  // Get pending articles (for Moderator queue)
+  @Get('/moderator/pending')
+  async getPendingArticles() {
+    try {
+      return await this.articleService.findAll(ArticleStatus.PENDING);
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'No pending articles found',
+        },
+        HttpStatus.NOT_FOUND,
+        { cause: error },
+      );
+    }
+  }
+
+  // Check for duplicates by DOI (for Moderator feature)
+  @Post('/check-duplicate')
+  async checkDuplicates(@Body('doi') doi: string) {
+    try {
+      // Find similar articles by DOI
+      const similarArticles = await this.articleService.findArticlesBySimilarDOI(doi);
+      return similarArticles;
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Unable to check for duplicates',
+        },
+        HttpStatus.BAD_REQUEST,
+        { cause: error },
+      );
+    }
+  }
+
+  // Delete article
   @Delete('/:id')
   async deleteArticle(@Param('id') id: string) {
     try {

@@ -5,13 +5,13 @@ import { User, UserRole } from '../../types/user.types';
 import { addAuthHeader } from '../../utils/auth.utils';
 
 const AdminUsersPage = () => {
-  const { user: currentUser, token } = useAuth();
+  const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!token || currentUser?.role !== 'Administrator') {
+    if (!currentUser || currentUser.role !== 'Administrator') {
       // Redirect to login or show unauthorized message
       window.location.href = '/login';
       return;
@@ -44,7 +44,7 @@ const AdminUsersPage = () => {
     };
 
     fetchUsers();
-  }, [token, currentUser]);
+  }, [currentUser]);
 
   const updateUserRole = async (userId: string, newRole: UserRole) => {
     try {
@@ -61,12 +61,12 @@ const AdminUsersPage = () => {
         ));
         alert('User role updated successfully');
       } else {
-        const errorData = await response.json();
-        alert(`Failed to update role: ${errorData.error || 'Unknown error'}`);
+        const data = await response.json();
+        alert(`Failed to update role: ${data.error || 'Unknown error'}`);
       }
-    } catch (error) {
-      alert('Network error. Please try again.');
-    }
+    } catch {
+        alert('Network error. Please try again.');
+      }
   };
 
   if (loading) {
@@ -77,7 +77,7 @@ const AdminUsersPage = () => {
     return <div className="container">Error: {error}</div>;
   }
 
-  if (!token || currentUser?.role !== 'Administrator') {
+  if (!currentUser || currentUser.role !== 'Administrator') {
     return <div className="container">Unauthorized: Administrator access required</div>;
   }
 
