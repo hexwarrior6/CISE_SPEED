@@ -30,9 +30,10 @@ export class UserService {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
 
-    // Create new user
+    // Create new user with default role as SUBMITTER only
     const newUser = new this.userModel({
       ...createUserDto,
+      role: 'Submitter', // Always register as Submitter by default
       password: hashedPassword,
     });
 

@@ -10,17 +10,17 @@ const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [role, setRole] = useState<UserRole>(UserRole.SUBMITTER);
   const router = useRouter();
 
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    // All users register as Submitter by default
     const registerData: CreateUserDto = {
       username,
       email,
       password,
-      role,
+      role: UserRole.SUBMITTER, // Always register as Submitter
       firstName,
       lastName,
     };
@@ -103,21 +103,6 @@ const RegisterPage = () => {
           value={lastName}
           onChange={(event) => setLastName(event.target.value)}
         />
-
-        <label htmlFor="role">Role:</label>
-        <select
-          className={formStyles.formItem}
-          name="role"
-          id="role"
-          value={role}
-          onChange={(event) => setRole(event.target.value as UserRole)}
-        >
-          <option value={UserRole.SUBMITTER}>Submitter</option>
-          <option value={UserRole.MODERATOR}>Moderator</option>
-          <option value={UserRole.ANALYST}>Analyst</option>
-          <option value={UserRole.SEARCHER}>Searcher</option>
-          <option value={UserRole.ADMINISTRATOR}>Administrator</option>
-        </select>
 
         <button className={formStyles.formItem} type="submit">
           Register

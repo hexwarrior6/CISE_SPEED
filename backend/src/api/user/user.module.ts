@@ -5,6 +5,7 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { User, UserSchema } from './user.schema';
 import { JwtModule } from '@nestjs/jwt';
+import { AdminGuard } from './admin.guard';
 
 // Helper function to convert time string to seconds
 function parseTimeToSeconds(timeString: string): number {
@@ -48,7 +49,7 @@ function parseTimeToSeconds(timeString: string): number {
     }),
   ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, AdminGuard],
   exports: [UserService],
 })
 export class UserModule {}

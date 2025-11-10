@@ -27,6 +27,17 @@ const PopulatedNavBar = () => {
       </NavItem>
       {isAuthenticated ? (
         <>
+          {/* Admin menu for administrators */}
+          {user?.role === 'Administrator' && (
+            <NavItem dropdown route="/admin">
+              Admin <IoMdArrowDropdown />
+              <NavDropdown>
+                <NavItem route="/admin">Dashboard</NavItem>
+                <NavItem route="/admin/users">User Management</NavItem>
+              </NavDropdown>
+            </NavItem>
+          )}
+          
           <NavItem dropdown>
             {user?.username} ({user?.role}) <IoMdArrowDropdown />
             <NavDropdown>
