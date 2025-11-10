@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { User, UserRole } from '../../types/user.types';
-import { addAuthHeader, getAuthToken } from '../../utils/auth.utils';
+import { addAuthHeader } from '../../utils/auth.utils';
 
 const AdminUsersPage = () => {
   const { user: currentUser, token } = useAuth();
@@ -28,16 +28,17 @@ const AdminUsersPage = () => {
           throw new Error('Failed to fetch users');
         }
 
-        const data = await response.json();
+        const data: (Partial<User> & { _id?: string })[] = await response.json();
         // Ensure each user has an id field based on _id if it doesn't exist
-        const usersWithId = data.map(user => ({
+        const usersWithId = data.map((user) => ({
           ...user,
-          id: user._id || user.id, // Use _id if id doesn't exist
+          id: user._id || user.id || '', // Use _id if id doesn't exist
         }));
-        setUsers(usersWithId);
+        setUsers(usersWithId as User[]);
         setLoading(false);
-      } catch (err) {
-        setError(err.message);
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch users';
+        setError(errorMessage);
         setLoading(false);
       }
     };
@@ -63,7 +64,7 @@ const AdminUsersPage = () => {
         const errorData = await response.json();
         alert(`Failed to update role: ${errorData.error || 'Unknown error'}`);
       }
-    } catch (err) {
+    } catch (error) {
       alert('Network error. Please try again.');
     }
   };

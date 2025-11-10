@@ -1,4 +1,4 @@
-import { Article, CreateArticleDto } from "@/types/article.types";
+import { CreateArticleDto } from "@/types/article.types";
 import { useAuth } from "@/contexts/AuthContext";
 import { FormEvent, useState } from "react";
 

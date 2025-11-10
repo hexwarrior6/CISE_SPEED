@@ -14,7 +14,7 @@ export class AdminGuard implements CanActivate {
     }
 
     const token = authHeader.substring(7);
-    
+
     try {
       const decoded = this.jwtService.verify(token);
       // Check if user role is Administrator

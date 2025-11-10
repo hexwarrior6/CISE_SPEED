@@ -1,6 +1,7 @@
 // pages/register.tsx
 import { FormEvent, useState } from "react";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
+import Link from "next/link";
 import formStyles from "../styles/Form.module.scss";
 import { CreateUserDto, UserRole } from "../types/user.types";
 
@@ -26,24 +27,27 @@ const RegisterPage = () => {
     };
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(registerData),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(registerData),
+        }
+      );
 
       if (response.ok) {
-        alert('Registration successful! You can now login.');
-        router.push('/login');
+        alert("Registration successful! You can now login.");
+        router.push("/login");
       } else {
         const errorData = await response.json();
-        alert(`Registration failed: ${errorData.error || 'Unknown error'}`);
+        alert(`Registration failed: ${errorData.error || "Unknown error"}`);
       }
     } catch (error) {
-      console.error('Registration error:', error);
-      alert('Network error. Please try again.');
+      console.error("Registration error:", error);
+      alert("Network error. Please try again.");
     }
   };
 
@@ -108,8 +112,10 @@ const RegisterPage = () => {
           Register
         </button>
       </form>
-      
-      <p>Already have an account? <a href="/login">Login here</a></p>
+
+      <p>
+        Already have an account? <Link href="/login">Login here</Link>
+      </p>
     </div>
   );
 };

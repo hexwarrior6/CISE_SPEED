@@ -15,10 +15,13 @@ export class UserService {
 
   async register(createUserDto: CreateUserDto) {
     // Check if user already exists
-    const existingUser = await this.userModel.findOne({ 
-      $or: [{ email: createUserDto.email }, { username: createUserDto.username }] 
+    const existingUser = await this.userModel.findOne({
+      $or: [
+        { email: createUserDto.email },
+        { username: createUserDto.username },
+      ],
     });
-    
+
     if (existingUser) {
       throw new HttpException(
         'User with this email or username already exists',
@@ -28,7 +31,10 @@ export class UserService {
 
     // Hash the password
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
+    const hashedPassword = await bcrypt.hash(
+      createUserDto.password,
+      saltRounds,
+    );
 
     // Create new user with default role as SUBMITTER only
     const newUser = new this.userModel({
@@ -44,26 +50,23 @@ export class UserService {
     // Find user by email
     const user = await this.userModel.findOne({ email: loginUserDto.email });
     if (!user || !user.isActive) {
-      throw new HttpException(
-        'Invalid credentials',
-        HttpStatus.UNAUTHORIZED,
-      );
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
 
     // Check password
-    const isPasswordValid = await bcrypt.compare(loginUserDto.password, user.password);
+    const isPasswordValid = await bcrypt.compare(
+      loginUserDto.password,
+      user.password,
+    );
     if (!isPasswordValid) {
-      throw new HttpException(
-        'Invalid credentials',
-        HttpStatus.UNAUTHORIZED,
-      );
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
 
     // Generate JWT token
-    const payload = { 
-      sub: user._id.toString(), 
-      email: user.email, 
-      role: user.role 
+    const payload = {
+      sub: user._id.toString(),
+      email: user.email,
+      role: user.role,
     };
     const access_token = this.jwtService.sign(payload);
 
@@ -94,10 +97,15 @@ export class UserService {
     // If password is being updated, hash it
     if (updateUserDto.password) {
       const saltRounds = 10;
-      updateUserDto.password = await bcrypt.hash(updateUserDto.password, saltRounds);
+      updateUserDto.password = await bcrypt.hash(
+        updateUserDto.password,
+        saltRounds,
+      );
     }
-    
-    return this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true }).exec();
+
+    return this.userModel
+      .findByIdAndUpdate(id, updateUserDto, { new: true })
+      .exec();
   }
 
   async delete(id: string) {

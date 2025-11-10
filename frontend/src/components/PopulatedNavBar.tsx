@@ -1,6 +1,5 @@
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useAuth } from '../contexts/AuthContext';
-import Link from 'next/link';
 import NavBar from "./nav/NavBar";
 import NavDropdown from "./nav/NavDropdown";
 import NavItem from "./nav/NavItem";

@@ -25,12 +25,12 @@ export class UserController {
       const user = await this.userService.register(createUserDto);
       // Don't return the password in the response
       const { password, ...result } = user.toObject();
-      return { 
-        message: 'User registered successfully', 
+      return {
+        message: 'User registered successfully',
         user: {
           ...result,
           id: user._id.toString(), // Ensure id field is properly mapped
-        }
+        },
       };
     } catch (error) {
       throw new HttpException(
@@ -68,7 +68,7 @@ export class UserController {
     try {
       const users = await this.userService.findAll();
       // Map users to ensure proper id field is present
-      return users.map(user => ({
+      return users.map((user) => ({
         ...user.toObject(),
         id: user._id.toString(), // Ensure id field is properly mapped
       }));
@@ -89,26 +89,34 @@ export class UserController {
   @UseGuards(AdminGuard)
   async updateUserRole(
     @Param('id') id: string,
-    @Body() body: { role: string }
+    @Body() body: { role: string },
   ) {
     try {
-      const validRoles = ['Submitter', 'Moderator', 'Analyst', 'Searcher', 'Administrator'];
+      const validRoles = [
+        'Submitter',
+        'Moderator',
+        'Analyst',
+        'Searcher',
+        'Administrator',
+      ];
       if (!validRoles.includes(body.role)) {
         throw new Error('Invalid role');
       }
-      
+
       // Update the user's role
-      const updatedUser = await this.userService.update(id, { role: body.role as any });
+      const updatedUser = await this.userService.update(id, {
+        role: body.role as any,
+      });
       if (!updatedUser) {
         throw new Error('User not found');
       }
-      
-      return { 
-        message: 'User role updated successfully', 
+
+      return {
+        message: 'User role updated successfully',
         user: {
           ...updatedUser.toObject(),
           id: updatedUser._id.toString(), // Ensure id field is properly mapped
-        }
+        },
       };
     } catch (error) {
       throw new HttpException(

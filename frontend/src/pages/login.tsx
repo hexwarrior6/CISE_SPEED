@@ -1,6 +1,7 @@
 // pages/login.tsx
 import { FormEvent, useState } from "react";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
+import Link from "next/link";
 import formStyles from "../styles/Form.module.scss";
 import { LoginUserDto } from "../types/user.types";
 
@@ -18,30 +19,33 @@ const LoginPage = () => {
     };
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(loginData),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(loginData),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
-        
+
         // Store the token and user info in localStorage
-        localStorage.setItem('access_token', data.access_token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        
+        localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
         // Redirect to dashboard or home page
-        router.push('/');
+        router.push("/");
       } else {
         const errorData = await response.json();
-        alert(`Login failed: ${errorData.error || 'Unknown error'}`);
+        alert(`Login failed: ${errorData.error || "Unknown error"}`);
       }
     } catch (error) {
-      console.error('Login error:', error);
-      alert('Network error. Please try again.');
+      console.error("Login error:", error);
+      alert("Network error. Please try again.");
     }
   };
 
@@ -75,8 +79,10 @@ const LoginPage = () => {
           Login
         </button>
       </form>
-      
-      <p>Don't have an account? <a href="/register">Register here</a></p>
+
+      <p>
+        Don&#39;t have an account? <Link href="/register">Register here</Link>
+      </p>
     </div>
   );
 };

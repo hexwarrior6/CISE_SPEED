@@ -7,16 +7,7 @@ import formStyles from "../../styles/Form.module.scss";
 import { CreateArticleDto } from "../../types/article.types";
 
 const NewDiscussion = () => {
-  const router = useRouter();
-  const { token, isAuthenticated } = useAuth();
-
-  // Check if user is authenticated on initial render
-  if (typeof window !== 'undefined' && !isAuthenticated) {
-    router.push('/login');
-    return <div>Redirecting to login...</div>;
-  }
-
-  // 根据后端 CreateArticleDto 定义状态
+  // Define all hooks first before any conditional returns
   const [customId, setCustomId] = useState("");
   const [title, setTitle] = useState("");
   const [authors, setAuthors] = useState(""); // 改为字符串，不是数组
@@ -25,6 +16,14 @@ const NewDiscussion = () => {
   const [doi, setDoi] = useState("");
   const [claim, setClaim] = useState(""); // 新增 claim 字段
   const [evidence, setEvidence] = useState(""); // 新增 evidence 字段
+  const router = useRouter();
+  const { token, isAuthenticated } = useAuth();
+
+  // Check if user is authenticated and redirect if not
+  if (typeof window !== 'undefined' && !isAuthenticated) {
+    router.push('/login');
+    return <div>Redirecting to login...</div>;
+  }
 
   const submitNewArticle = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

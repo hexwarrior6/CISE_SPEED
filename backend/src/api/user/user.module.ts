@@ -11,7 +11,7 @@ import { AdminGuard } from './admin.guard';
 function parseTimeToSeconds(timeString: string): number {
   const regex = /^(\d+)([smhd])$/;
   const match = timeString.match(regex);
-  
+
   if (!match) {
     // Default to 1 hour if format is not recognized
     return 3600;
@@ -21,11 +21,16 @@ function parseTimeToSeconds(timeString: string): number {
   const unit = match[2];
 
   switch (unit) {
-    case 's': return value;
-    case 'm': return value * 60;
-    case 'h': return value * 3600;
-    case 'd': return value * 86400;
-    default: return 3600; // fallback to 1 hour
+    case 's':
+      return value;
+    case 'm':
+      return value * 60;
+    case 'h':
+      return value * 3600;
+    case 'd':
+      return value * 86400;
+    default:
+      return 3600; // fallback to 1 hour
   }
 }
 
@@ -35,13 +40,14 @@ function parseTimeToSeconds(timeString: string): number {
     JwtModule.registerAsync({
       useFactory: () => {
         const expiresIn = process.env.JWT_EXPIRES_IN || '1h';
-        const expiresInSeconds = typeof expiresIn === 'string' 
-          ? parseTimeToSeconds(expiresIn) 
-          : expiresIn;
+        const expiresInSeconds =
+          typeof expiresIn === 'string'
+            ? parseTimeToSeconds(expiresIn)
+            : expiresIn;
 
         return {
           secret: process.env.JWT_SECRET || 'default_secret',
-          signOptions: { 
+          signOptions: {
             expiresIn: expiresInSeconds,
           },
         };
