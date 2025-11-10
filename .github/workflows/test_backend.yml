@@ -1,0 +1,22 @@
+name: GitHub Actions Backend Test
+on:
+  workflow_call:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install
+        working-directory: backend
+      - name: Build project
+        run: npm run build
+        working-directory: backend
+      - name: Run test (if you have tests)
+        run: npm run test
+        working-directory: backend
+        continue-on-error: true
