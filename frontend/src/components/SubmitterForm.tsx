@@ -22,7 +22,7 @@ interface SubmitArticleProps {
 // Validation schema
 const validationSchema = Yup.object().shape({
   customId: Yup.string()
-    .required('ID is required')
+    .optional()
     .matches(/^[A-Za-z0-9_\-]+$/, 'ID can only contain letters, numbers, underscores, and hyphens'),
   title: Yup.string()
     .required('Title is required')
@@ -58,6 +58,21 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
     setSuccess(null);
 
     try {
+      // Check if ID already exists - only if customId is provided
+      if (values.customId && values.customId.trim()) {
+        const idCheckResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/${values.customId}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+
+        if (idCheckResponse.ok) {
+          throw new Error(`Article with ID '${values.customId}' already exists. Please choose a different ID.`);
+        }
+      }
+
+      // Proceed with submission
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/submit`, {
         method: 'POST',
         headers: {
@@ -68,7 +83,15 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to submit article');
+        // Try to get error details from response
+        const errorData = await response.json().catch(() => ({}));
+        // Use specific error message if available, otherwise generic message
+        const errorMessage = errorData?.error || errorData?.message || 'Failed to submit article';
+        // Enhance duplicate ID error message
+        if (errorMessage.includes('already exists')) {
+          throw new Error(`Article with ID '${values.customId}' already exists. Please choose a different ID.`);
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -81,6 +104,7 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
       }, 5000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred while submitting the article');
+      console.error('Submission error:', err);
     } finally {
       setSubmitting(false);
     }
@@ -121,17 +145,12 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
           <Form className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <div>
-                  <label htmlFor="customId" className="block text-sm font-medium text-gray-700">
-                    Article ID *
-                  </label>
+                <div style={{ display: 'none' }}>
                   <Field
                     id="customId"
                     name="customId"
-                    className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${props.errors.customId && props.touched.customId ? 'border-red-500' : ''}`}
-                    placeholder="Unique ID for the article"
+                    defaultValue=""
                   />
-                  <ErrorMessage name="customId" component="div" className="mt-1 text-sm text-red-600" />
                 </div>
 
                 <div>

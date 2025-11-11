@@ -7,14 +7,11 @@ export enum ArticleStatus {
 
 // Enum for evidence types
 export enum EvidenceType {
-  EMPIRICAL_STUDY = 'Empirical Study',
-  CASE_STUDY = 'Case Study',
-  EXPERIMENTAL = 'Experimental',
-  SYSTEMATIC_LITERATURE_REVIEW = 'Systematic Literature Review',
-  META_ANALYSIS = 'Meta Analysis',
-  SURVEY = 'Survey',
-  THEORETICAL = 'Theoretical',
-  TOOL_EVALUATION = 'Tool Evaluation',
+  WEAK_AGAINST = 'Weak Against',
+  MODERATELY_AGAINST = 'Moderately Against',
+  NEUTRAL = 'Neutral',
+  MODERATELY_SUPPORTS = 'Moderately Supports',
+  STRONGLY_SUPPORTS = 'Strongly Supports',
 }
 
 // Article interface

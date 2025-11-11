@@ -67,3 +67,6 @@ export class Article {
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article);
+
+// 确保在schema级别添加唯一索引，强制保证customId的唯一性
+ArticleSchema.index({ customId: 1 }, { unique: true });
