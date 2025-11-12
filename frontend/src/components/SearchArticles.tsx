@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Article, EvidenceType } from '../types/article';
+import { Article, EvidenceType, ArticleStatus } from '../types/article';
 
 // Enhanced search functionality with real-time suggestions
 
 const SearchArticles: React.FC = () => {
   const [keywords, setKeywords] = useState('');
   const [evidenceType, setEvidenceType] = useState('');
+  const [pubYearFrom, setPubYearFrom] = useState('');
+  const [pubYearTo, setPubYearTo] = useState('');
+  const [authors, setAuthors] = useState('');
+  const [status, setStatus] = useState<ArticleStatus | ''>('');
+  const [source, setSource] = useState('');
   const [results, setResults] = useState<Article[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +27,7 @@ const SearchArticles: React.FC = () => {
       
       return () => clearTimeout(delaySearch);
     }
-  }, [keywords, evidenceType]);
+  }, [keywords, evidenceType, pubYearFrom, pubYearTo, authors, status, source]);
 
   const handleSearch = async () => {
     setLoading(true);
@@ -33,6 +38,11 @@ const SearchArticles: React.FC = () => {
       const params = new URLSearchParams();
       if (keywords.trim()) params.append('keywords', keywords.trim());
       if (evidenceType) params.append('evidenceType', evidenceType);
+      if (pubYearFrom) params.append('pubYearFrom', pubYearFrom);
+      if (pubYearTo) params.append('pubYearTo', pubYearTo);
+      if (authors) params.append('authors', authors);
+      if (status) params.append('status', status);
+      if (source) params.append('source', source);
       
       // Add sort parameters
       params.append('sortBy', sortField);
@@ -75,6 +85,11 @@ const SearchArticles: React.FC = () => {
   const clearFilters = () => {
     setKeywords('');
     setEvidenceType('');
+    setPubYearFrom('');
+    setPubYearTo('');
+    setAuthors('');
+    setStatus('');
+    setSource('');
     setResults([]);
     setSearchPerformed(false);
   };
@@ -129,6 +144,83 @@ const SearchArticles: React.FC = () => {
                 <option key={type} value={type}>{type}</option>
               ))}
             </select>
+          </div>
+          <div>
+            <label htmlFor="pubYearFrom" className="block text-sm font-medium text-gray-700 mb-1">
+              Publication Year From
+            </label>
+            <input
+              id="pubYearFrom"
+              type="number"
+              min="1900"
+              max={new Date().getFullYear()}
+              value={pubYearFrom}
+              onChange={(e) => setPubYearFrom(e.target.value)}
+              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="e.g. 2010"
+              aria-label="Publication year from"
+            />
+          </div>
+          <div>
+            <label htmlFor="pubYearTo" className="block text-sm font-medium text-gray-700 mb-1">
+              Publication Year To
+            </label>
+            <input
+              id="pubYearTo"
+              type="number"
+              min="1900"
+              max={new Date().getFullYear()}
+              value={pubYearTo}
+              onChange={(e) => setPubYearTo(e.target.value)}
+              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="e.g. 2023"
+              aria-label="Publication year to"
+            />
+          </div>
+          <div>
+            <label htmlFor="authors" className="block text-sm font-medium text-gray-700 mb-1">
+              Authors
+            </label>
+            <input
+              id="authors"
+              type="text"
+              value={authors}
+              onChange={(e) => setAuthors(e.target.value)}
+              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Author name"
+              aria-label="Filter by authors"
+            />
+          </div>
+          <div>
+            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+              Status
+            </label>
+            <select
+              id="status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as ArticleStatus)}
+              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              aria-label="Select article status"
+            >
+              <option value="">All Statuses</option>
+              {Object.values(ArticleStatus).map((statusValue) => (
+                <option key={statusValue} value={statusValue}>{statusValue}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="source" className="block text-sm font-medium text-gray-700 mb-1">
+              Source
+            </label>
+            <input
+              id="source"
+              type="text"
+              value={source}
+              onChange={(e) => setSource(e.target.value)}
+              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Journal, conference, etc."
+              aria-label="Filter by source"
+            />
           </div>
         </div>
         

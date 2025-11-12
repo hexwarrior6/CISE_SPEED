@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@types/yup": "^0.29.14",
-    "formik": "^2.4.8",
+    "formik": "^2.4.9",
     "next": "15.5.3",
     "next-auth": "^4.24.11",
     "react": "19.1.0",

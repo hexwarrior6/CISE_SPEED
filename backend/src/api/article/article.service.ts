@@ -164,7 +164,12 @@ export class ArticleService {
     keywords: string, 
     evidenceType?: string,
     sortBy: string = 'createdAt',
-    sortDirection: 'asc' | 'desc' = 'desc'
+    sortDirection: 'asc' | 'desc' = 'desc',
+    pubYearFrom?: string,
+    pubYearTo?: string,
+    authors?: string,
+    status?: ArticleStatus,
+    source?: string
   ): Promise<Article[]> {
     const query: any = {
       status: ArticleStatus.APPROVED, // Only search approved articles
@@ -186,7 +191,37 @@ export class ArticleService {
     if (evidenceType) {
       query.evidence = evidenceType;
     }
+    // Add publication year range filter
+    if (pubYearFrom || pubYearTo) {
+      query.pubyear = {};
+      if (pubYearFrom) {
+        const fromYear = parseInt(pubYearFrom, 10);
+        if (!isNaN(fromYear)) {
+          query.pubyear.$gte = pubYearFrom;
+        }
+      }
+      if (pubYearTo) {
+        const toYear = parseInt(pubYearTo, 10);
+        if (!isNaN(toYear)) {
+          query.pubyear.$lte = pubYearTo;
+        }
+      }
+    }
 
+    // Add authors filter
+    if (authors) {
+      query.authors = new RegExp(authors, 'i');
+    }
+
+    // Add status filter (if user has permission to see other statuses)
+    if (status) {
+      query.status = status;
+    }
+
+    // Add source filter
+    if (source) {
+      query.source = new RegExp(source, 'i');
+    }
     // Create sort object
     const sortObject: any = {};
     // Validate sort field to prevent injection
