@@ -81,10 +81,18 @@ export class ArticleController {
         notification: 'Email notification will be sent when review is complete'
       };
     } catch (error) {
+      // Handle specific error types and pass appropriate messages to frontend
+      if (error instanceof HttpException) {
+        // Re-throw the HttpException as is to preserve status code and message
+        throw error;
+      }
+      
+      // For other errors, wrap in HttpException with proper details
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
-          error: 'Unable to submit this article',
+          error: error.message || 'Unable to submit this article',
+          message: error.message || 'Unable to submit this article',
         },
         HttpStatus.BAD_REQUEST,
         { cause: error },

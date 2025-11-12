@@ -64,26 +64,57 @@ export class ArticleService {
 
   // Submit new article with duplicate checking
   async submitArticle(createArticleDto: CreateArticleDto): Promise<Article> {
+    let customId = createArticleDto.customId?.trim();
+    
+    // If customId is not provided, generate an auto-incrementing ID
+    if (!customId) {
+      // Get the highest existing ID number
+      const lastArticle = await this.articleModel.findOne({})
+        .sort({ customId: -1 })
+        .exec();
+      
+      let nextId = 1;
+      if (lastArticle && lastArticle.customId) {
+        // Extract number from the last ID
+        const lastIdNum = parseInt(lastArticle.customId, 10);
+        if (!isNaN(lastIdNum)) {
+          nextId = lastIdNum + 1;
+        }
+      }
+      
+      customId = nextId.toString();
+    }
+
+    // Check for duplicate by customId
+    const existingById = await this.articleModel.findOne({ customId }).exec();
+    if (existingById) {
+      throw new HttpException(
+        `Article with ID '${customId}' already exists`,
+        HttpStatus.CONFLICT
+      );
+    }
+    
+    // Update createArticleDto with the determined customId
+    createArticleDto.customId = customId;
+
     // Check for duplicate by DOI
     const isDuplicate = await this.checkDuplicateByDOI(createArticleDto.doi);
     
-    if (isDuplicate) {
-      const duplicateArticle = await this.getDuplicateByDOI(createArticleDto.doi);
-      const newArticle = new this.articleModel({
-        ...createArticleDto,
-        status: ArticleStatus.PENDING,
-        isDuplicate: true,
-        duplicateOf: duplicateArticle?.customId,
-      });
-      return newArticle.save();
-    }
-
-    // Create new article with pending status
-    const newArticle = new this.articleModel({
+    // Create article data with common fields
+    const articleData: any = {
       ...createArticleDto,
       status: ArticleStatus.PENDING,
-      isDuplicate: false,
-    });
+      isDuplicate: isDuplicate,
+    };
+    
+    // If duplicate, add reference to original article
+    if (isDuplicate) {
+      const duplicateArticle = await this.getDuplicateByDOI(createArticleDto.doi);
+      articleData.duplicateOf = duplicateArticle?.customId;
+    }
+
+    // Create and save the new article
+    const newArticle = new this.articleModel(articleData);
     return newArticle.save();
   }
 
