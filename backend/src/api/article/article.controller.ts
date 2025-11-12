@@ -160,14 +160,24 @@ export class ArticleController {
     @Query('keywords') keywords: string, 
     @Query('evidenceType') evidenceType?: string,
     @Query('sortBy') sortBy: string = 'createdAt',
-    @Query('sortDirection') sortDirection: 'asc' | 'desc' = 'desc'
+    @Query('sortDirection') sortDirection: 'asc' | 'desc' = 'desc',
+    @Query('pubYearFrom') pubYearFrom?: string,
+    @Query('pubYearTo') pubYearTo?: string,
+    @Query('authors') authors?: string,
+    @Query('status') status?: string,
+    @Query('source') source?: string
   ) {
     try {
       return await this.articleService.searchArticles(
         keywords, 
         evidenceType,
         sortBy,
-        sortDirection
+        sortDirection,
+        pubYearFrom,
+        pubYearTo,
+        authors,
+        status as ArticleStatus,
+        source
       );
     } catch (error) {
       throw new HttpException(
