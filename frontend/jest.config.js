@@ -10,14 +10,36 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(gif|ttf|eot|svg|png|jpg|jpeg)$': '<rootDir>/src/__mocks__/fileMock.js',
+    'next/image': '<rootDir>/src/__mocks__/nextImageMock.js',
+    'next/link': '<rootDir>/__mocks__/nextLink.js',
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
+    '^.+\\.(tsx|ts)?$': [
+      '@swc/jest',
+      {
+        jsc: {
+          transform: {
+            react: {
+              runtime: 'automatic',
+            },
+          },
+        },
+      },
+    ],
+    '^.+\\.(js|jsx)$': [
+      '@swc/jest',
+      {
+        jsc: {
+          transform: {
+            react: {
+              runtime: 'automatic',
+            },
+          },
+        },
+      },
+    ],
   },
-  transformIgnorePatterns: [
-    '/node_modules/(?!(@babel|@react-leaflet|react-leaflet|color|simple-swizzle)/).*/',
-  ],
   moduleDirectories: [
     'node_modules',
     '<rootDir>/src',
