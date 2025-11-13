@@ -1,3 +1,7 @@
+// Import the design system
+@import 'design-system';
+
+// Maintain backward compatibility for existing styles
 .form {
   display: flex;
   flex-direction: column;

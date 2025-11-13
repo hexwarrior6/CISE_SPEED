@@ -2,9 +2,9 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from 'next/router';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import formStyles from "../../styles/Form.module.scss";
-import { CreateArticleDto } from "../../types/article.types";
+import { CreateArticleDto } from "@/types/article.types";
 
 const NewDiscussion = () => {
   // Define all hooks first before any conditional returns
@@ -74,96 +74,112 @@ const NewDiscussion = () => {
     <div className="container">
       <h1>New Article</h1>
       <form className={formStyles.form} onSubmit={submitNewArticle}>
-        <label htmlFor="customId">Custom ID:</label>
-        <input
-          className={formStyles.formItem}
-          type="text"
-          name="customId"
-          id="customId"
-          value={customId}
-          onChange={(event) => setCustomId(event.target.value)}
-          required
-        />
+        <div className={formStyles.formGroup}>
+          <label htmlFor="customId" className={formStyles.formLabel}>Custom ID:</label>
+          <input
+            className={formStyles.formControl}
+            type="text"
+            name="customId"
+            id="customId"
+            value={customId}
+            onChange={(event) => setCustomId(event.target.value)}
+            required
+          />
+        </div>
 
-        <label htmlFor="title">Title:</label>
-        <input
-          className={formStyles.formItem}
-          type="text"
-          name="title"
-          id="title"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          required
-        />
+        <div className={formStyles.formGroup}>
+          <label htmlFor="title" className={formStyles.formLabel}>Title:</label>
+          <input
+            className={formStyles.formControl}
+            type="text"
+            name="title"
+            id="title"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            required
+          />
+        </div>
 
-        <label htmlFor="authors">Authors (comma-separated):</label>
-        <input
-          className={formStyles.formItem}
-          type="text"
-          name="authors"
-          id="authors"
-          value={authors}
-          onChange={(event) => setAuthors(event.target.value)}
-          placeholder="e.g., Siniaalto, M., Abrahamsson, P."
-          required
-        />
+        <div className={formStyles.formGroup}>
+          <label htmlFor="authors" className={formStyles.formLabel}>Authors (comma-separated):</label>
+          <input
+            className={formStyles.formControl}
+            type="text"
+            name="authors"
+            id="authors"
+            value={authors}
+            onChange={(event) => setAuthors(event.target.value)}
+            placeholder="e.g., Siniaalto, M., Abrahamsson, P."
+            required
+          />
+        </div>
 
-        <label htmlFor="source">Source:</label>
-        <input
-          className={formStyles.formItem}
-          type="text"
-          name="source"
-          id="source"
-          value={source}
-          onChange={(event) => setSource(event.target.value)}
-          required
-        />
+        <div className={formStyles.formGroup}>
+          <label htmlFor="source" className={formStyles.formLabel}>Source:</label>
+          <input
+            className={formStyles.formControl}
+            type="text"
+            name="source"
+            id="source"
+            value={source}
+            onChange={(event) => setSource(event.target.value)}
+            required
+          />
+        </div>
 
-        <label htmlFor="pubYear">Publication Year:</label>
-        <input
-          className={formStyles.formItem}
-          type="text" // 使用 text 类型，因为后端是 string
-          name="pubYear"
-          id="pubYear"
-          value={pubYear}
-          onChange={(event) => setPubYear(event.target.value)}
-          required
-        />
+        <div className={formStyles.formGroup}>
+          <label htmlFor="pubYear" className={formStyles.formLabel}>Publication Year:</label>
+          <input
+            className={formStyles.formControl}
+            type="text" // 使用 text 类型，因为后端是 string
+            name="pubYear"
+            id="pubYear"
+            value={pubYear}
+            onChange={(event) => setPubYear(event.target.value)}
+            required
+          />
+        </div>
 
-        <label htmlFor="doi">DOI:</label>
-        <input
-          className={formStyles.formItem}
-          type="text"
-          name="doi"
-          id="doi"
-          value={doi}
-          onChange={(event) => setDoi(event.target.value)}
-          required
-        />
+        <div className={formStyles.formGroup}>
+          <label htmlFor="doi" className={formStyles.formLabel}>DOI:</label>
+          <input
+            className={formStyles.formControl}
+            type="text"
+            name="doi"
+            id="doi"
+            value={doi}
+            onChange={(event) => setDoi(event.target.value)}
+            required
+          />
+        </div>
 
-        <label htmlFor="claim">Claim:</label>
-        <input
-          className={formStyles.formItem}
-          type="text"
-          name="claim"
-          id="claim"
-          value={claim}
-          onChange={(event) => setClaim(event.target.value)}
-          required
-        />
+        <div className={formStyles.formGroup}>
+          <label htmlFor="claim" className={formStyles.formLabel}>Claim:</label>
+          <input
+            className={formStyles.formControl}
+            type="text"
+            name="claim"
+            id="claim"
+            value={claim}
+            onChange={(event) => setClaim(event.target.value)}
+            required
+          />
+        </div>
 
-        <label htmlFor="evidence">Evidence:</label>
-        <input
-          className={formStyles.formItem}
-          type="text"
-          name="evidence"
-          id="evidence"
-          value={evidence}
-          onChange={(event) => setEvidence(event.target.value)}
-          required
-        />
+        <div className={formStyles.formGroup}>
+          <label htmlFor="evidence" className={formStyles.formLabel}>Evidence:</label>
+          <input
+            className={formStyles.formControl}
+            type="text"
+            name="evidence"
+            id="evidence"
+            value={evidence}
+            onChange={(event) => setEvidence(event.target.value)}
+            required
+          />
+        </div>
 
-        <button className={formStyles.formItem} type="submit">
+        <button className={formStyles.btnPrimary} type="submit">
           Submit
         </button>
       </form>
