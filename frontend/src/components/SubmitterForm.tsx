@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage, FormikProps } from "formik";
 import * as Yup from "yup";
 import { EvidenceType } from "../types/article";
-import styles from "../styles/SubmitPage.module.scss";
 
 interface ArticleFormData {
   customId: string;
@@ -151,15 +150,37 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
   };
 
   return (
-    <div className={styles.formSection}>
+    <div>
       {success && (
-        <div className={`${styles.message} ${styles.success}`}>
+        <div className={`alert alert-success mb-md`}>
+          <svg
+            className="alert-icon"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clipRule="evenodd"
+            />
+          </svg>
           {success}
         </div>
       )}
 
       {error && (
-        <div className={`${styles.message} ${styles.error}`}>
+        <div className={`alert alert-error mb-md`}>
+          <svg
+            className="alert-icon"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clipRule="evenodd"
+            />
+          </svg>
           {error}
         </div>
       )}
@@ -181,123 +202,122 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
       >
         {(props: FormikProps<ArticleFormData>) => (
           <Form>
-            <div className={styles.formGrid}>
-              <div className={styles.formSection}>
+            <div className="d-flex gap-lg">
+              <div className="flex-1">
                 <div style={{ display: "none" }}>
                   <Field id="customId" name="customId" defaultValue="" />
                 </div>
 
-                <div className={styles.formGroup}>
-                  <label htmlFor="title" className={styles.label}>
-                    Title <span className={styles.required}>*</span>
+                <div className="form-group">
+                  <label htmlFor="title" className="form-label">
+                    Title <span style={{ color: 'var(--error-500)' }}>*</span>
                   </label>
                   <Field
                     id="title"
                     name="title"
-                    className={`${styles.input} ${
-                      props.errors.title && props.touched.title ? styles.error : ""
+                    className={`form-input ${
+                      props.errors.title && props.touched.title ? 'is-invalid' : ''
                     }`}
                     placeholder="Title of the article"
                   />
                   <ErrorMessage
                     name="title"
                     component="div"
-                    className="mt-1 text-sm text-red-600"
+                    className="mt-sm text-sm text-red-600"
                   />
                 </div>
 
-                <div className={styles.formGroup}>
-                  <label htmlFor="authors" className={styles.label}>
-                    Authors <span className={styles.required}>*</span>
+                <div className="form-group">
+                  <label htmlFor="authors" className="form-label">
+                    Authors <span style={{ color: 'var(--error-500)' }}>*</span>
                   </label>
                   <Field
                     id="authors"
                     name="authors"
-                    className={`${styles.input} ${
-                      props.errors.authors && props.touched.authors ? styles.error : ""
+                    className={`form-input ${
+                      props.errors.authors && props.touched.authors ? 'is-invalid' : ''
                     }`}
                     placeholder="Author names (comma separated)"
                   />
                   <ErrorMessage
                     name="authors"
                     component="div"
-                    className="mt-1 text-sm text-red-600"
+                    className="mt-sm text-sm text-red-600"
                   />
                 </div>
 
-                <div className={styles.formGroup}>
-                  <label htmlFor="source" className={styles.label}>
-                    Source <span className={styles.required}>*</span>
+                <div className="form-group">
+                  <label htmlFor="source" className="form-label">
+                    Source <span style={{ color: 'var(--error-500)' }}>*</span>
                   </label>
                   <Field
                     id="source"
                     name="source"
-                    className={`${styles.input} ${
-                      props.errors.source && props.touched.source ? styles.error : ""
+                    className={`form-input ${
+                      props.errors.source && props.touched.source ? 'is-invalid' : ''
                     }`}
                     placeholder="Journal/Conference name"
                   />
                   <ErrorMessage
                     name="source"
                     component="div"
-                    className="mt-1 text-sm text-red-600"
+                    className="mt-sm text-sm text-red-600"
                   />
                 </div>
 
-                <div className={styles.formGroup}>
-                  <label htmlFor="pubyear" className={styles.label}>
-                    Publication Year <span className={styles.required}>*</span>
+                <div className="form-group">
+                  <label htmlFor="pubyear" className="form-label">
+                    Publication Year <span style={{ color: 'var(--error-500)' }}>*</span>
                   </label>
                   <Field
                     id="pubyear"
                     name="pubyear"
-                    className={`${styles.input} ${
-                      props.errors.pubyear && props.touched.pubyear ? styles.error : ""
+                    className={`form-input ${
+                      props.errors.pubyear && props.touched.pubyear ? 'is-invalid' : ''
                     }`}
                     placeholder="YYYY"
                   />
                   <ErrorMessage
                     name="pubyear"
                     component="div"
-                    className="mt-1 text-sm text-red-600"
+                    className="mt-sm text-sm text-red-600"
                   />
                 </div>
               </div>
 
-              <div className={styles.formSection}>
-
-                <div className={styles.formGroup}>
-                  <label htmlFor="doi" className={styles.label}>
-                    DOI <span className={styles.required}>*</span>
+              <div className="flex-1">
+                <div className="form-group">
+                  <label htmlFor="doi" className="form-label">
+                    DOI <span style={{ color: 'var(--error-500)' }}>*</span>
                   </label>
                   <Field
                     id="doi"
                     name="doi"
-                    className={`${styles.input} ${
-                      props.errors.doi && props.touched.doi ? styles.error : ""
+                    className={`form-input ${
+                      props.errors.doi && props.touched.doi ? 'is-invalid' : ''
                     }`}
                     placeholder="10.xxxx/xxxxx"
                   />
                   <ErrorMessage
                     name="doi"
                     component="div"
-                    className="mt-1 text-sm text-red-600"
+                    className="mt-sm text-sm text-red-600"
                   />
-                  <p className={styles.helpText}>
+                  <p className="text-sm text-muted mt-sm">
                     DOI will be checked for duplicates
                   </p>
                 </div>
 
-                <div className={styles.formGroup}>
-                  <label htmlFor="evidence" className={styles.label}>
-                    Evidence Type <span className={styles.required}>*</span>
+                <div className="form-group">
+                  <label htmlFor="evidence" className="form-label">
+                    Evidence Type <span style={{ color: 'var(--error-500)' }}>*</span>
                   </label>
                   <Field
                     as="select"
                     id="evidence"
                     name="evidence"
-                    className={`${styles.select} ${
-                      props.errors.evidence && props.touched.evidence ? styles.error : ""
+                    className={`form-select ${
+                      props.errors.evidence && props.touched.evidence ? 'is-invalid' : ''
                     }`}
                   >
                     <option value="">Select evidence type</option>
@@ -310,61 +330,62 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
                   <ErrorMessage
                     name="evidence"
                     component="div"
-                    className="mt-1 text-sm text-red-600"
+                    className="mt-sm text-sm text-red-600"
                   />
                 </div>
-                
-                <div className={styles.formGroup}>
-                  <label htmlFor="submitterEmail" className={styles.label}>
-                    Email for Notifications <span className={styles.required}>*</span>
+
+                <div className="form-group">
+                  <label htmlFor="submitterEmail" className="form-label">
+                    Email for Notifications <span style={{ color: 'var(--error-500)' }}>*</span>
                   </label>
                   <Field
                     id="submitterEmail"
                     name="submitterEmail"
                     type="email"
-                    className={`${styles.input} ${
-                      props.errors.submitterEmail && props.touched.submitterEmail ? styles.error : ""
+                    className={`form-input ${
+                      props.errors.submitterEmail && props.touched.submitterEmail ? 'is-invalid' : ''
                     }`}
                     placeholder="your.email@example.com"
                   />
                   <ErrorMessage
                     name="submitterEmail"
                     component="div"
-                    className="mt-1 text-sm text-red-600"
+                    className="mt-sm text-sm text-red-600"
                   />
-                  <p className={styles.helpText}>
+                  <p className="text-sm text-muted mt-sm">
                     You will receive review results at this email address
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className={`${styles.formGroup} ${styles.topSpacing}`}>
-              <label htmlFor="claim" className={styles.label}>
-                Claim <span className={styles.required}>*</span>
+            <div className="form-group mt-sm">
+              <label htmlFor="claim" className="form-label">
+                Claim <span style={{ color: 'var(--error-500)' }}>*</span>
               </label>
               <Field
                 as="textarea"
                 id="claim"
                 name="claim"
                 rows={4}
-                className={`${styles.textarea} ${
-                  props.errors.claim && props.touched.claim ? styles.error : ""
+                className={`form-textarea ${
+                  props.errors.claim && props.touched.claim ? 'is-invalid' : ''
                 }`}
                 placeholder="Describe the SE practice claim made in this article"
+                style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
               />
               <ErrorMessage
                 name="claim"
                 component="div"
-                className="mt-1 text-sm text-red-600"
+                className="mt-sm text-sm text-red-600"
               />
             </div>
 
-            <div className={styles.topSpacing}>
+            <div className="mt-lg">
               <button
                 type="submit"
                 disabled={submitting}
-                className={styles.submitButton}
+                className="btn btn-primary"
               >
                 {submitting ? (
                   <>

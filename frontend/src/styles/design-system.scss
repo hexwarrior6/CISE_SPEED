@@ -223,22 +223,37 @@ body {
   font-family: var(--font-family-primary);
   background-color: white;
   transition: all var(--transition-fast);
-  
+
   &:focus {
     outline: none;
     border-color: var(--primary-500);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
   }
-  
+
   &:disabled {
     background-color: var(--neutral-100);
     cursor: not-allowed;
   }
 }
 
+// Limit width for form elements in flex containers
+.d-flex > .flex-1 .form-input,
+.d-flex > .flex-1 .form-select,
+.d-flex > .flex-1 .form-textarea {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
 .form-textarea {
   min-height: 120px;
   resize: vertical;
+}
+
+.form-input.is-invalid,
+.form-select.is-invalid,
+.form-textarea.is-invalid {
+  border-color: var(--error-500);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); // Error color with opacity
 }
 
 // Card component
@@ -345,6 +360,10 @@ body {
 
 .flex-row {
   flex-direction: row;
+}
+
+.flex-1 {
+  flex: 1;
 }
 
 .justify-content-center {
