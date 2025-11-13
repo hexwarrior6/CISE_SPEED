@@ -2,6 +2,7 @@ import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import SortableTable from "../../components/table/SortableTable";
 import { Article } from "../../types/article.types";
+import styles from '../../styles/ArticlesPage.module.scss';
 
 const Articles: NextPage<{ initialArticles?: Article[] }> = ({ initialArticles }) => {
   const [articles, setArticles] = useState<Article[]>(initialArticles || []);
@@ -50,14 +51,53 @@ const Articles: NextPage<{ initialArticles?: Article[] }> = ({ initialArticles }
   ];
 
   if (loading) {
-    return <div className="container">Loading articles...</div>;
+    return (
+      <div className={styles.articlesPage}>
+        <div className={styles.articlesContainerMain}>
+          <div className={styles.header}>
+            <h1 className={styles.title}>Articles Index</h1>
+            <p className={styles.description}>Page containing a table of all articles in the database</p>
+          </div>
+          <div className={styles.content}>
+            <div className={styles.loading}>Loading articles...</div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="container">
-      <h1>Articles Index Page</h1>
-      <p>Page containing a table of articles:</p>
-      <SortableTable headers={headers} data={articles} />
+    <div className={styles.articlesPage}>
+      <div className={styles.articlesContainerMain}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Articles Index</h1>
+          <p className={styles.description}>Page containing a table of all articles in the database</p>
+        </div>
+        <div className={styles.content}>
+          {articles.length > 0 ? (
+            <div className={styles.tableContainer}>
+              <SortableTable 
+                headers={headers} 
+                data={articles} 
+                tableClassName={styles.articlesTable}
+                headerClassName={styles.articlesTableTh}
+                cellClassName={styles.articlesTableTd}
+                customCellClasses={{
+                  tableHeader: styles.tableHeader,
+                  titleCell: styles.titleCell,
+                  authorCell: styles.authorCell,
+                  sourceCell: styles.sourceCell,
+                  yearCell: styles.yearCell,
+                  claimCell: styles.claimCell,
+                  evidenceCell: styles.evidenceCell
+                }}
+              />
+            </div>
+          ) : (
+            <div className={styles.noResults}>No articles found.</div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

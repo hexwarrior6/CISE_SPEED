@@ -1,0 +1,194 @@
+.articlesPage {
+  min-height: calc(100vh - 64px); // Full height minus navbar height
+  padding: 1rem;
+  background-color: #f9fafb; // Light gray background
+}
+
+.articlesContainerMain {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); // Soft shadow
+  overflow: hidden;
+}
+
+.header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f8fafc;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.description {
+  font-size: 0.875rem;
+  color: #374151;
+  margin: 0.5rem 0 0;
+}
+
+.content {
+  padding: 1.5rem;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  max-height: 70vh; // Limit table height with scrolling
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+}
+
+.articlesTable {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+.articlesTable {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+.articlesTable th,
+.articlesTable td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+}
+
+.articlesTable th {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  background-color: #f9fafb;
+  position: sticky;
+  top: 0;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    background-color: #f3f4f6;
+  }
+}
+
+.articlesTableTh {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  background-color: #f9fafb;
+  position: sticky;
+  top: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.articlesTableTd {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+}
+
+.tableHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sortIndicator {
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.articlesTable tbody tr {
+  transition: background-color 0.15s;
+
+  &:hover {
+    background-color: #f9fafb;
+  }
+}
+
+.articlesTable td {
+  color: #374151;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.titleCell {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.titleText {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.idText {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.authorCell {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sourceCell {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.yearCell {
+  text-align: center;
+  width: 80px;
+}
+
+.claimCell {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.evidenceCell {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.noResults {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+  background-color: #f9fafb;
+  border-radius: 4px;
+  margin-top: 1rem;
+}
+
+.loading {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+}
