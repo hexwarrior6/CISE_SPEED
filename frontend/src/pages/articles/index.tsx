@@ -40,6 +40,19 @@ const Articles: NextPage<{ initialArticles?: Article[] }> = ({ initialArticles }
       fetchArticles();
     }
   }, [initialArticles]);
+
+  // Calculate stats for the stats bar
+  const totalArticles = articles.length;
+  const uniqueAuthors = Array.from(new Set(articles.flatMap(article => article.authors || []))).length;
+  const uniqueSources = Array.from(new Set(articles.map(article => article.source))).length;
+  const years = articles
+    .map(article => article.pubyear)
+    .filter(year => year) // Filter out null/undefined/empty years
+    .map(year => parseInt(year)) // Convert to number
+    .filter(year => !isNaN(year)); // Filter out NaN values
+  const minYear = years.length > 0 ? Math.min(...years) : 0;
+  const maxYear = years.length > 0 ? Math.max(...years) : 0;
+
   const headers: { key: string; label: string }[] = [
     { key: "title", label: "Title" },
     { key: "authors", label: "Authors" },
@@ -52,49 +65,81 @@ const Articles: NextPage<{ initialArticles?: Article[] }> = ({ initialArticles }
 
   if (loading) {
     return (
-      <div className={styles.articlesPage}>
-        <div className={styles.articlesContainerMain}>
-          <div className={styles.header}>
-            <h1 className={styles.title}>Articles Index</h1>
-            <p className={styles.description}>Page containing a table of all articles in the database</p>
-          </div>
-          <div className={styles.content}>
-            <div className={styles.loading}>Loading articles...</div>
-          </div>
+      <div className={styles.container}>
+        <div className={styles.loadingContainer}>
+          <div className={styles.spinner}></div>
+          <p>Loading articles...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.articlesPage}>
-      <div className={styles.articlesContainerMain}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>Articles Index</h1>
-          <p className={styles.description}>Page containing a table of all articles in the database</p>
+    <div className={styles.container}>
+      {/* Page Header */}
+      <div className={styles.header}>
+        <h1 className={styles.pageTitle}>Articles Index</h1>
+        <p className={styles.pageSubtitle}>Page containing a table of all articles in the database</p>
+      </div>
+
+      {/* Stats Bar */}
+      <div className={styles.statsBar}>
+        <div className={styles.statCard}>
+          <div className={styles.statValue}>{totalArticles}</div>
+          <div className={styles.statLabel}>Total Articles</div>
         </div>
-        <div className={styles.content}>
+        <div className={styles.statCard}>
+          <div className={styles.statValue}>{uniqueAuthors}</div>
+          <div className={styles.statLabel}>Unique Authors</div>
+        </div>
+        <div className={styles.statCard}>
+          <div className={styles.statValue}>{uniqueSources}</div>
+          <div className={styles.statLabel}>Unique Sources</div>
+        </div>
+        <div className={styles.statCard}>
+          <div className={styles.statValue}>{minYear && maxYear ? `${minYear}-${maxYear}` : 'N/A'}</div>
+          <div className={styles.statLabel}>Year Range</div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className={styles.mainContent}>
+        <div className={styles.tableContainer}>
           {articles.length > 0 ? (
-            <div className={styles.tableContainer}>
-              <SortableTable 
-                headers={headers} 
-                data={articles} 
-                tableClassName={styles.articlesTable}
-                headerClassName={styles.articlesTableTh}
-                cellClassName={styles.articlesTableTd}
-                customCellClasses={{
-                  tableHeader: styles.tableHeader,
-                  titleCell: styles.titleCell,
-                  authorCell: styles.authorCell,
-                  sourceCell: styles.sourceCell,
-                  yearCell: styles.yearCell,
-                  claimCell: styles.claimCell,
-                  evidenceCell: styles.evidenceCell
-                }}
-              />
-            </div>
+            <SortableTable
+              headers={headers}
+              data={articles}
+              tableClassName={styles.table}
+              headerClassName={styles.tableTh}
+              cellClassName={styles.tableTd}
+              customCellClasses={{
+                tableHeader: styles.tableHeader,
+                titleCell: styles.titleCell,
+                authorCell: styles.authorCell,
+                sourceCell: styles.sourceCell,
+                yearCell: styles.yearCell,
+                claimCell: styles.claimCell,
+                evidenceCell: styles.evidenceCell
+              }}
+            />
           ) : (
-            <div className={styles.noResults}>No articles found.</div>
+            <div className={styles.emptyState}>
+              <svg
+                className={styles.emptyStateIcon}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              <h3>No articles found</h3>
+              <p>There are currently no articles in the system.</p>
+            </div>
           )}
         </div>
       </div>

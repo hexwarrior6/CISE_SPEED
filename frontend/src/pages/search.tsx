@@ -11,10 +11,14 @@ const SearchPage: React.FC = () => {
         <meta name="description" content="Search through approved SE Evidence articles" />
       </Head>
       <main className={styles.searchPage}>
-        <div className={styles.searchContainerMain}>
-          <div className={styles.searchFormContainer}>
-            <SearchArticles />
-          </div>
+        {/* Page Header */}
+        <div className={styles.header}>
+          <h1 className={styles.pageTitle}>Search SE Evidence Articles</h1>
+          <p className={styles.pageSubtitle}>Find research articles related to software engineering practices</p>
+        </div>
+
+        <div className={styles.searchFormContainer}>
+          <SearchArticles />
         </div>
       </main>
     </>
