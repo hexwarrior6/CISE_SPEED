@@ -13,7 +13,8 @@ export class ArticleService {
 
   // Get all articles (with optional filtering)
   async findAll(status?: ArticleStatus): Promise<Article[]> {
-    const query = status ? { status } : {};
+    // If no status is specified, default to only showing approved articles
+    const query = status ? { status } : { status: ArticleStatus.APPROVED };
     return this.articleModel.find(query).sort({ createdAt: -1 }).exec();
   }
 
@@ -42,37 +43,41 @@ export class ArticleService {
     // Basic approach: find articles with exact DOI match or similar DOI
     // In a real system, you might want to implement more sophisticated similarity checks
     const exactMatch = await this.articleModel.findOne({ doi }).exec();
-    
+
     if (exactMatch) {
       return [exactMatch];
     }
-    
+
     // Try finding similar DOIs by matching parts of the DOI
     // For example, match the publisher prefix or first part of the DOI
     const doiParts = doi.split('/');
     if (doiParts.length >= 2) {
       const publisherPrefix = doiParts[0];
-      const similarArticles = await this.articleModel.find({
-        doi: { $regex: publisherPrefix, $options: 'i' },
-      }).limit(5).exec();
-      
+      const similarArticles = await this.articleModel
+        .find({
+          doi: { $regex: publisherPrefix, $options: 'i' },
+        })
+        .limit(5)
+        .exec();
+
       return similarArticles;
     }
-    
+
     return [];
   }
 
   // Submit new article with duplicate checking
   async submitArticle(createArticleDto: CreateArticleDto): Promise<Article> {
     let customId = createArticleDto.customId?.trim();
-    
+
     // If customId is not provided, generate an auto-incrementing ID
     if (!customId) {
       // Get the highest existing ID number
-      const lastArticle = await this.articleModel.findOne({})
+      const lastArticle = await this.articleModel
+        .findOne({})
         .sort({ customId: -1 })
         .exec();
-      
+
       let nextId = 1;
       if (lastArticle && lastArticle.customId) {
         // Extract number from the last ID
@@ -81,7 +86,7 @@ export class ArticleService {
           nextId = lastIdNum + 1;
         }
       }
-      
+
       customId = nextId.toString();
     }
 
@@ -90,26 +95,28 @@ export class ArticleService {
     if (existingById) {
       throw new HttpException(
         `Article with ID '${customId}' already exists`,
-        HttpStatus.CONFLICT
+        HttpStatus.CONFLICT,
       );
     }
-    
+
     // Update createArticleDto with the determined customId
     createArticleDto.customId = customId;
 
     // Check for duplicate by DOI
     const isDuplicate = await this.checkDuplicateByDOI(createArticleDto.doi);
-    
+
     // Create article data with common fields
     const articleData: any = {
       ...createArticleDto,
       status: ArticleStatus.PENDING,
       isDuplicate: isDuplicate,
     };
-    
+
     // If duplicate, add reference to original article
     if (isDuplicate) {
-      const duplicateArticle = await this.getDuplicateByDOI(createArticleDto.doi);
+      const duplicateArticle = await this.getDuplicateByDOI(
+        createArticleDto.doi,
+      );
       articleData.duplicateOf = duplicateArticle?.customId;
     }
 
@@ -127,9 +134,9 @@ export class ArticleService {
 
   // Review article (for moderators)
   async reviewArticle(
-    id: string, 
-    reviewData: ReviewArticleDto, 
-    reviewerId: string
+    id: string,
+    reviewData: ReviewArticleDto,
+    reviewerId: string,
   ): Promise<Article> {
     const article = await this.articleModel.findOne({ customId: id }).exec();
     if (!article) {
@@ -151,17 +158,20 @@ export class ArticleService {
     const updatedArticle = await this.articleModel
       .findOneAndUpdate({ customId: id }, updateData, { new: true })
       .exec();
-      
+
     if (!updatedArticle) {
-      throw new HttpException('Failed to update article', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Failed to update article',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-    
+
     return updatedArticle;
   }
 
   // Search articles by keywords and filters with sorting
   async searchArticles(
-    keywords: string, 
+    keywords: string,
     evidenceType?: string,
     sortBy: string = 'createdAt',
     sortDirection: 'asc' | 'desc' = 'desc',
@@ -169,7 +179,7 @@ export class ArticleService {
     pubYearTo?: string,
     authors?: string,
     status?: ArticleStatus,
-    source?: string
+    source?: string,
   ): Promise<Article[]> {
     const query: any = {
       status: ArticleStatus.APPROVED, // Only search approved articles
@@ -225,7 +235,13 @@ export class ArticleService {
     // Create sort object
     const sortObject: any = {};
     // Validate sort field to prevent injection
-    const allowedSortFields = ['createdAt', 'title', 'pubyear', 'authors', 'source'];
+    const allowedSortFields = [
+      'createdAt',
+      'title',
+      'pubyear',
+      'authors',
+      'source',
+    ];
     if (allowedSortFields.includes(sortBy)) {
       sortObject[sortBy] = sortDirection;
     } else {
