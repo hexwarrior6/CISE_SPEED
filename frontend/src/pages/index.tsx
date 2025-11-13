@@ -1,5 +1,6 @@
 // pages/index.tsx
 import Head from "next/head";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -19,12 +20,12 @@ export default function Home() {
               A comprehensive database of empirical evidence for software engineering practices
             </p>
             <div className="hero-buttons">
-              <a href="/articles" className="btn btn-primary">
-                Browse Articles
-              </a>
-              <a href="/search" className="btn btn-secondary">
-                Search Evidence
-              </a>
+              <Link href="/articles">
+                <a className="btn btn-primary">Browse Articles</a>
+              </Link>
+              <Link href="/search">
+                <a className="btn btn-secondary">Search Evidence</a>
+              </Link>
             </div>
           </div>
         </div>

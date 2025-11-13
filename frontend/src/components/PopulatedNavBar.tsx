@@ -8,8 +8,8 @@ const PopulatedNavBar = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const [showAdminDropdown, setShowAdminDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
-  const adminDropdownRef = useRef<HTMLDivElement>(null);
-  const userDropdownRef = useRef<HTMLDivElement>(null);
+  const adminDropdownRef = useRef<HTMLLIElement>(null);
+  const userDropdownRef = useRef<HTMLLIElement>(null);
 
   const handleLogout = () => {
     logout();
