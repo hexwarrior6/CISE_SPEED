@@ -215,11 +215,11 @@ export class ArticleController {
 
   // Check for duplicates by DOI (for Moderator feature)
   @Post('/check-duplicate')
-  async checkDuplicates(@Body('doi') doi: string) {
+  async checkDuplicates(@Body('doi') doi: string, @Body('excludeId') excludeId?: string) {
     try {
-      // Find similar articles by DOI
+      // Find similar articles by DOI, excluding the current article if ID is provided
       const similarArticles =
-        await this.articleService.findArticlesBySimilarDOI(doi);
+        await this.articleService.findArticlesBySimilarDOI(doi, excludeId);
       return similarArticles;
     } catch (error) {
       throw new HttpException(

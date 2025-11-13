@@ -39,13 +39,21 @@ export class ArticleService {
   }
 
   // Find articles with similar DOIs (for duplicate checking)
-  async findArticlesBySimilarDOI(doi: string): Promise<Article[]> {
+  async findArticlesBySimilarDOI(doi: string, excludeId?: string): Promise<Article[]> {
+    // Query object to build the search criteria
+    const query: any = { doi };
+
+    // If an ID is provided to exclude, add it to the query
+    if (excludeId) {
+      query.customId = { $ne: excludeId };
+    }
+
     // Basic approach: find articles with exact DOI match or similar DOI
     // In a real system, you might want to implement more sophisticated similarity checks
-    const exactMatch = await this.articleModel.findOne({ doi }).exec();
+    const exactMatches = await this.articleModel.find(query).exec();
 
-    if (exactMatch) {
-      return [exactMatch];
+    if (exactMatches.length > 0) {
+      return exactMatches;
     }
 
     // Try finding similar DOIs by matching parts of the DOI
@@ -53,10 +61,17 @@ export class ArticleService {
     const doiParts = doi.split('/');
     if (doiParts.length >= 2) {
       const publisherPrefix = doiParts[0];
+      const query: any = {
+        doi: { $regex: publisherPrefix, $options: 'i' },
+      };
+
+      // Exclude the current article if ID provided
+      if (excludeId) {
+        query.customId = { $ne: excludeId };
+      }
+
       const similarArticles = await this.articleModel
-        .find({
-          doi: { $regex: publisherPrefix, $options: 'i' },
-        })
+        .find(query)
         .limit(5)
         .exec();
 
@@ -120,7 +135,10 @@ export class ArticleService {
       const duplicateArticle = await this.getDuplicateByDOI(
         createArticleDto.doi,
       );
-      articleData.duplicateOf = duplicateArticle?.customId;
+      // Make sure the duplicateOf field doesn't point to itself
+      if (duplicateArticle && duplicateArticle.customId !== customId) {
+        articleData.duplicateOf = duplicateArticle.customId;
+      }
     }
 
     // Create and save the new article
@@ -155,7 +173,15 @@ export class ArticleService {
     // If marked as duplicate, add duplicate information
     if (reviewData.isDuplicate) {
       updateData['isDuplicate'] = true;
+      // Prevent an article from being marked as duplicate of itself
+      if (reviewData.duplicateOf === id) {
+        throw new HttpException('Cannot mark article as duplicate of itself', HttpStatus.BAD_REQUEST);
+      }
       updateData['duplicateOf'] = reviewData.duplicateOf;
+    } else {
+      // If not marked as duplicate, clear duplicate information
+      updateData['isDuplicate'] = false;
+      updateData['duplicateOf'] = undefined;
     }
 
     const updatedArticle = await this.articleModel

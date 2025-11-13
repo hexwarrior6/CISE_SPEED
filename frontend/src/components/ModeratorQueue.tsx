@@ -51,7 +51,7 @@ const ModeratorQueue: React.FC = () => {
     }
   };
 
-  const checkForDuplicates = async (doi: string) => {
+  const checkForDuplicates = async (doi: string, currentId?: string) => {
     if (!doi) return;
 
     setDuplicateCheckLoading(true);
@@ -64,7 +64,10 @@ const ModeratorQueue: React.FC = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({ doi }),
+          body: JSON.stringify({
+            doi,
+            ...(currentId && { excludeId: currentId }) // Only include excludeId if currentId is provided
+          }),
         }
       );
 
@@ -93,7 +96,7 @@ const ModeratorQueue: React.FC = () => {
     });
     setReviewSuccess(null);
     setDuplicateCheckResults([]);
-    checkForDuplicates(article.doi);
+    checkForDuplicates(article.doi, article.customId);
   };
 
   const handleReviewSubmit = async () => {
@@ -395,7 +398,7 @@ const ModeratorQueue: React.FC = () => {
                   <div className={styles.sectionHeader}>
                     <h3 className={styles.sectionTitle}>Duplicate Check</h3>
                     <button
-                      onClick={() => checkForDuplicates(selectedArticle.doi)}
+                      onClick={() => checkForDuplicates(selectedArticle.doi, selectedArticle.customId)}
                       disabled={duplicateCheckLoading}
                       className={styles.checkBtn}
                     >
