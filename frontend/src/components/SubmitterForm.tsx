@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage, FormikProps } from "formik";
 import * as Yup from "yup";
 import { EvidenceType } from "../types/article";
+import styles from "../styles/SubmitPage.module.scss";
 
 interface ArticleFormData {
   customId: string;
@@ -150,19 +151,15 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">
-        Submit SE Evidence Article
-      </h1>
-
+    <div className={styles.formSection}>
       {success && (
-        <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-md">
+        <div className={`${styles.message} ${styles.success}`}>
           {success}
         </div>
       )}
 
       {error && (
-        <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-md">
+        <div className={`${styles.message} ${styles.error}`}>
           {error}
         </div>
       )}
@@ -183,27 +180,22 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
         onSubmit={handleSubmit}
       >
         {(props: FormikProps<ArticleFormData>) => (
-          <Form className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
+          <Form>
+            <div className={styles.formGrid}>
+              <div className={styles.formSection}>
                 <div style={{ display: "none" }}>
                   <Field id="customId" name="customId" defaultValue="" />
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="title"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Title *
+                <div className={styles.formGroup}>
+                  <label htmlFor="title" className={styles.label}>
+                    Title <span className={styles.required}>*</span>
                   </label>
                   <Field
                     id="title"
                     name="title"
-                    className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      props.errors.title && props.touched.title
-                        ? "border-red-500"
-                        : ""
+                    className={`${styles.input} ${
+                      props.errors.title && props.touched.title ? styles.error : ""
                     }`}
                     placeholder="Title of the article"
                   />
@@ -214,20 +206,15 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
                   />
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="authors"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Authors *
+                <div className={styles.formGroup}>
+                  <label htmlFor="authors" className={styles.label}>
+                    Authors <span className={styles.required}>*</span>
                   </label>
                   <Field
                     id="authors"
                     name="authors"
-                    className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      props.errors.authors && props.touched.authors
-                        ? "border-red-500"
-                        : ""
+                    className={`${styles.input} ${
+                      props.errors.authors && props.touched.authors ? styles.error : ""
                     }`}
                     placeholder="Author names (comma separated)"
                   />
@@ -238,20 +225,15 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
                   />
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="source"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Source *
+                <div className={styles.formGroup}>
+                  <label htmlFor="source" className={styles.label}>
+                    Source <span className={styles.required}>*</span>
                   </label>
                   <Field
                     id="source"
                     name="source"
-                    className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      props.errors.source && props.touched.source
-                        ? "border-red-500"
-                        : ""
+                    className={`${styles.input} ${
+                      props.errors.source && props.touched.source ? styles.error : ""
                     }`}
                     placeholder="Journal/Conference name"
                   />
@@ -263,21 +245,16 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="pubyear"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Publication Year *
+              <div className={styles.formSection}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="pubyear" className={styles.label}>
+                    Publication Year <span className={styles.required}>*</span>
                   </label>
                   <Field
                     id="pubyear"
                     name="pubyear"
-                    className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      props.errors.pubyear && props.touched.pubyear
-                        ? "border-red-500"
-                        : ""
+                    className={`${styles.input} ${
+                      props.errors.pubyear && props.touched.pubyear ? styles.error : ""
                     }`}
                     placeholder="YYYY"
                   />
@@ -288,20 +265,15 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
                   />
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="doi"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    DOI *
+                <div className={styles.formGroup}>
+                  <label htmlFor="doi" className={styles.label}>
+                    DOI <span className={styles.required}>*</span>
                   </label>
                   <Field
                     id="doi"
                     name="doi"
-                    className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      props.errors.doi && props.touched.doi
-                        ? "border-red-500"
-                        : ""
+                    className={`${styles.input} ${
+                      props.errors.doi && props.touched.doi ? styles.error : ""
                     }`}
                     placeholder="10.xxxx/xxxxx"
                   />
@@ -310,26 +282,21 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
                     component="div"
                     className="mt-1 text-sm text-red-600"
                   />
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className={styles.helpText}>
                     DOI will be checked for duplicates
                   </p>
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="evidence"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Evidence Type *
+                <div className={styles.formGroup}>
+                  <label htmlFor="evidence" className={styles.label}>
+                    Evidence Type <span className={styles.required}>*</span>
                   </label>
                   <Field
                     as="select"
                     id="evidence"
                     name="evidence"
-                    className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      props.errors.evidence && props.touched.evidence
-                        ? "border-red-500"
-                        : ""
+                    className={`${styles.select} ${
+                      props.errors.evidence && props.touched.evidence ? styles.error : ""
                     }`}
                   >
                     <option value="">Select evidence type</option>
@@ -345,22 +312,17 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
                     className="mt-1 text-sm text-red-600"
                   />
                 </div>
-                <div>
-                  <label
-                    htmlFor="submitterEmail"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Email for Notifications *
+                
+                <div className={styles.formGroup}>
+                  <label htmlFor="submitterEmail" className={styles.label}>
+                    Email for Notifications <span className={styles.required}>*</span>
                   </label>
                   <Field
                     id="submitterEmail"
                     name="submitterEmail"
                     type="email"
-                    className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      props.errors.submitterEmail &&
-                      props.touched.submitterEmail
-                        ? "border-red-500"
-                        : ""
+                    className={`${styles.input} ${
+                      props.errors.submitterEmail && props.touched.submitterEmail ? styles.error : ""
                     }`}
                     placeholder="your.email@example.com"
                   />
@@ -369,29 +331,24 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
                     component="div"
                     className="mt-1 text-sm text-red-600"
                   />
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className={styles.helpText}>
                     You will receive review results at this email address
                   </p>
                 </div>
               </div>
             </div>
 
-            <div>
-              <label
-                htmlFor="claim"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Claim *
+            <div className={styles.formGroup}>
+              <label htmlFor="claim" className={styles.label}>
+                Claim <span className={styles.required}>*</span>
               </label>
               <Field
                 as="textarea"
                 id="claim"
                 name="claim"
                 rows={4}
-                className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                  props.errors.claim && props.touched.claim
-                    ? "border-red-500"
-                    : ""
+                className={`${styles.textarea} ${
+                  props.errors.claim && props.touched.claim ? styles.error : ""
                 }`}
                 placeholder="Describe the SE practice claim made in this article"
               />
@@ -406,7 +363,7 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className={styles.submitButton}
               >
                 {submitting ? (
                   <>

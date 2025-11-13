@@ -3,6 +3,7 @@ import Head from 'next/head';
 import SubmitterForm from '../components/SubmitterForm';
 import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/router';
+import styles from '../styles/SubmitPage.module.scss';
 
 const SubmitPage: React.FC = () => {
   const router = useRouter();
@@ -31,9 +32,17 @@ const SubmitPage: React.FC = () => {
         <meta name="description" content="Submit a new SE Evidence article for review" />
       </Head>
       
-      <main className="min-h-screen bg-gray-50 py-12">
-        <div className="container mx-auto px-4">
-          <SubmitterForm />
+      <main className={styles.submitPage}>
+        <div className={styles.submitContainer}>
+          <div className={styles.header}>
+            <h1 className={styles.title}>Submit SE Evidence Article</h1>
+          </div>
+          <div className={styles.formContainer}>
+            <SubmitterForm />
+          </div>
+          <div className={styles.footer}>
+            <p>Please fill in all required fields marked with an asterisk (*)</p>
+          </div>
         </div>
       </main>
     </>
