@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Article, ReviewData } from '../types/article';
+import styles from '../styles/ModeratorQueue.module.scss';
 
 const ModeratorQueue: React.FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -45,7 +46,7 @@ const ModeratorQueue: React.FC = () => {
 
   const checkForDuplicates = async (doi: string) => {
     if (!doi) return;
-    
+
     setDuplicateCheckLoading(true);
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/check-duplicate`, {
@@ -80,7 +81,7 @@ const ModeratorQueue: React.FC = () => {
     });
     setReviewSuccess(null);
     setDuplicateCheckResults([]);
-    
+
     // Automatically check for duplicates when an article is selected
     checkForDuplicates(article.doi);
   };
@@ -115,50 +116,54 @@ const ModeratorQueue: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="text-center p-8">Loading pending articles...</div>;
+    return <div className={styles.emptyState}>Loading pending articles...</div>;
   }
 
   if (error) {
     return (
-      <div className="max-w-4xl mx-auto p-6 bg-red-100 text-red-700 rounded-lg">
+      <div className={`${styles.message} ${styles.error}`}>
         {error}
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Moderator Queue</h1>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Moderator Queue</h1>
+      </div>
 
       {reviewSuccess && (
-        <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-md">
+        <div className={`${styles.message} ${styles.success}`}>
           {reviewSuccess}
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className={styles.queueContainer}>
         {/* Queue List */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg shadow-md p-4">
-            <h2 className="text-xl font-semibold mb-4">Pending Articles ({articles.length})</h2>
-            
+        <div className={styles.queueSection}>
+          <div className={styles.queueHeader}>
+            <h2>Pending Articles ({articles.length})</h2>
+          </div>
+
+          <div className={styles.queueList}>
             {articles.length === 0 ? (
-              <p className="text-gray-500">No pending articles</p>
+              <p className="text-gray-500 text-center py-4">No pending articles</p>
             ) : (
-              <div className="space-y-2 max-h-[600px] overflow-y-auto">
+              <div className="space-y-2">
                 {articles.map((article) => (
                   <div
                     key={article.customId}
-                    className={`p-3 border rounded-md cursor-pointer transition-all ${selectedArticle?.customId === article.customId ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'}`}
+                    className={`${styles.queueItem} ${selectedArticle?.customId === article.customId ? styles.selected : ''}`}
                     onClick={() => handleArticleSelect(article)}
                   >
-                    <div className="font-medium text-gray-900 truncate">{article.title}</div>
-                    <div className="text-sm text-gray-500">{article.authors}</div>
-                    <div className="text-xs text-gray-400 mt-1">
+                    <div className={styles.title}>{article.title}</div>
+                    <div className={styles.authors}>{article.authors}</div>
+                    <div className={styles.date}>
                       Submitted: {new Date(article.createdAt || Date.now()).toLocaleDateString()}
                     </div>
                     {article.isDuplicate && (
-                      <div className="text-xs text-amber-600 mt-1">Potential duplicate</div>
+                      <div className={styles.duplicateWarning}>Potential duplicate</div>
                     )}
                   </div>
                 ))}
@@ -168,192 +173,184 @@ const ModeratorQueue: React.FC = () => {
         </div>
 
         {/* Article Details and Review Form */}
-        <div className="lg:col-span-2">
+        <div className={styles.articleDetails}>
           {selectedArticle ? (
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4">Article Details</h2>
-              
-              <div className="mb-6 space-y-2">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">ID</h3>
-                    <p>{selectedArticle.customId}</p>
+            <>
+              <div className={styles.articleHeader}>
+                <h2>Article Details</h2>
+              </div>
+
+              <div className={styles.articleContent}>
+                <div className={styles.articleInfoGrid}>
+                  <div className={styles.infoGroup}>
+                    <div className={styles.label}>ID</div>
+                    <div className={styles.value}>{selectedArticle.customId}</div>
                   </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">DOI</h3>
-                    <p>{selectedArticle.doi}</p>
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Title</h3>
-                  <h3 className="text-lg font-medium">{selectedArticle.title}</h3>
-                </div>
-                
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Authors</h3>
-                  <p>{selectedArticle.authors}</p>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Source</h3>
-                    <p>{selectedArticle.source}</p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Publication Year</h3>
-                    <p>{selectedArticle.pubyear}</p>
+                  <div className={styles.infoGroup}>
+                    <div className={styles.label}>DOI</div>
+                    <div className={styles.value}>{selectedArticle.doi}</div>
                   </div>
                 </div>
-                
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Evidence Type</h3>
-                  <p>{selectedArticle.evidence}</p>
+
+                <div className={styles.infoGroup}>
+                  <div className={styles.label}>Title</div>
+                  <div className={styles.value}>{selectedArticle.title}</div>
                 </div>
-                
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Claim</h3>
-                  <p className="whitespace-pre-line">{selectedArticle.claim}</p>
+
+                <div className={styles.infoGroup}>
+                  <div className={styles.label}>Authors</div>
+                  <div className={styles.value}>{selectedArticle.authors}</div>
                 </div>
-                
+
+                <div className={styles.articleInfoGrid}>
+                  <div className={styles.infoGroup}>
+                    <div className={styles.label}>Source</div>
+                    <div className={styles.value}>{selectedArticle.source}</div>
+                  </div>
+                  <div className={styles.infoGroup}>
+                    <div className={styles.label}>Publication Year</div>
+                    <div className={styles.value}>{selectedArticle.pubyear}</div>
+                  </div>
+                </div>
+
+                <div className={styles.infoGroup}>
+                  <div className={styles.label}>Evidence Type</div>
+                  <div className={styles.value}>{selectedArticle.evidence}</div>
+                </div>
+
+                <div className={styles.infoGroup}>
+                  <div className={styles.label}>Claim</div>
+                  <div className={styles.value}>{selectedArticle.claim}</div>
+                </div>
+
                 {selectedArticle.isDuplicate && selectedArticle.duplicateOf && (
-                  <div className="p-3 bg-amber-50 border-l-4 border-amber-500 rounded">
-                    <h3 className="text-sm font-medium text-amber-800">Potential Duplicate</h3>
-                    <p className="text-sm text-amber-700">Duplicate of article ID: {selectedArticle.duplicateOf}</p>
+                  <div className={styles.duplicateWarningBox}>
+                    <div className={styles.warningTitle}>Potential Duplicate</div>
+                    <div className={styles.warningText}>Duplicate of article ID: {selectedArticle.duplicateOf}</div>
                   </div>
                 )}
-              </div>
 
-              <hr className="my-6" />
+                <div className={styles.reviewSection}>
+                  <h2 className={styles.reviewHeader}>Review Article</h2>
 
-              <h2 className="text-xl font-semibold mb-4">Review Article</h2>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Review Action</label>
-                  <div className="flex space-x-4">
-                    <label className="inline-flex items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        value="Approved"
-                        checked={reviewData.status === 'Approved'}
-                        onChange={(e) => setReviewData({ ...reviewData, status: e.target.value as 'Approved' | 'Rejected' })}
-                        className="h-4 w-4 text-blue-600"
+                  <div className={styles.reviewForm}>
+                    <div>
+                      <label className={styles.label}>Review Action</label>
+                      <div className={styles.radioGroup}>
+                        <label className={styles.radioOption}>
+                          <input
+                            type="radio"
+                            name="status"
+                            value="Approved"
+                            checked={reviewData.status === 'Approved'}
+                            onChange={(e) => setReviewData({ ...reviewData, status: e.target.value as 'Approved' | 'Rejected' })}
+                          />
+                          <span>Approve</span>
+                        </label>
+                        <label className={styles.radioOption}>
+                          <input
+                            type="radio"
+                            name="status"
+                            value="Rejected"
+                            checked={reviewData.status === 'Rejected'}
+                            onChange={(e) => setReviewData({ ...reviewData, status: e.target.value as 'Approved' | 'Rejected' })}
+                          />
+                          <span>Reject</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className={styles.checkboxGroup}>
+                      <label className={styles.checkboxLabel}>
+                        <input
+                          type="checkbox"
+                          checked={reviewData.isDuplicate}
+                          onChange={(e) => setReviewData({ ...reviewData, isDuplicate: e.target.checked })}
+                        />
+                        Mark as Duplicate
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => selectedArticle && checkForDuplicates(selectedArticle.doi)}
+                        disabled={duplicateCheckLoading}
+                        className={styles.checkButton}
+                      >
+                        {duplicateCheckLoading ? 'Checking...' : 'Check DOI for Duplicates'}
+                      </button>
+                    </div>
+
+                    {duplicateCheckResults.length > 0 && (
+                      <div className={styles.duplicateResults}>
+                        <h4 className={styles.resultsHeader}>Potential Duplicates Found:</h4>
+                        <ul className={styles.duplicateList}>
+                          {duplicateCheckResults.map(duplicate => (
+                            <li key={duplicate.customId} className={styles.duplicateItem}>
+                              <input
+                                type="radio"
+                                name="duplicateChoice"
+                                value={duplicate.customId}
+                                onChange={() => setReviewData({
+                                  ...reviewData,
+                                  isDuplicate: true,
+                                  duplicateOf: duplicate.customId
+                                })}
+                              />
+                              <span className={styles.duplicateTitle}>{duplicate.title}</span>
+                              <span className={styles.duplicateId}>({duplicate.customId})</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {reviewData.isDuplicate && !duplicateCheckResults.length && (
+                      <div className={styles.formGroup}>
+                        <label className={styles.label}>
+                          Duplicate of Article ID
+                        </label>
+                        <input
+                          type="text"
+                          value={reviewData.duplicateOf}
+                          onChange={(e) => setReviewData({ ...reviewData, duplicateOf: e.target.value })}
+                          className={styles.input}
+                          placeholder="Enter article ID"
+                        />
+                      </div>
+                    )}
+
+                    <div className={styles.formGroup}>
+                      <label className={styles.label}>Review Comments</label>
+                      <textarea
+                        value={reviewData.reviewComment}
+                        onChange={(e) => setReviewData({ ...reviewData, reviewComment: e.target.value })}
+                        rows={4}
+                        className={styles.textarea}
+                        placeholder="Add your review comments here"
                       />
-                      <span className="ml-2 text-gray-700">Approve</span>
-                    </label>
-                    <label className="inline-flex items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        value="Rejected"
-                        checked={reviewData.status === 'Rejected'}
-                        onChange={(e) => setReviewData({ ...reviewData, status: e.target.value as 'Approved' | 'Rejected' })}
-                        className="h-4 w-4 text-red-600"
-                      />
-                      <span className="ml-2 text-gray-700">Reject</span>
-                    </label>
+                    </div>
+
+                    <div className={styles.buttonGroup}>
+                      <button
+                        onClick={() => setSelectedArticle(null)}
+                        className={`${styles.button} ${styles.cancelButton}`}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleReviewSubmit}
+                        disabled={submittingReview}
+                        className={`${styles.button} ${styles.submitButton}`}
+                      >
+                        {submittingReview ? 'Submitting...' : 'Submit Review'}
+                      </button>
+                    </div>
                   </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Mark as Duplicate
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => selectedArticle && checkForDuplicates(selectedArticle.doi)}
-                      disabled={duplicateCheckLoading}
-                      className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    >
-                      {duplicateCheckLoading ? 'Checking...' : 'Check DOI for Duplicates'}
-                    </button>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={reviewData.isDuplicate}
-                    onChange={(e) => setReviewData({ ...reviewData, isDuplicate: e.target.checked })}
-                    className="h-4 w-4 text-blue-600"
-                  />
-                </div>
-
-                {duplicateCheckResults.length > 0 && (
-                  <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-md">
-                    <h4 className="text-sm font-medium text-amber-800 mb-2">Potential Duplicates Found:</h4>
-                    <ul className="space-y-2">
-                      {duplicateCheckResults.map(duplicate => (
-                        <li key={duplicate.customId} className="text-sm">
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="duplicateChoice"
-                              value={duplicate.customId}
-                              onChange={() => setReviewData({ 
-                                ...reviewData, 
-                                isDuplicate: true, 
-                                duplicateOf: duplicate.customId 
-                              })}
-                              className="h-4 w-4 text-blue-600 mr-2"
-                            />
-                            <div>
-                              <span className="font-medium">{duplicate.title}</span>
-                              <span className="text-gray-500 ml-2">({duplicate.customId})</span>
-                            </div>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {reviewData.isDuplicate && !duplicateCheckResults.length && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Duplicate of Article ID
-                    </label>
-                    <input
-                      type="text"
-                      value={reviewData.duplicateOf}
-                      onChange={(e) => setReviewData({ ...reviewData, duplicateOf: e.target.value })}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-                      placeholder="Enter article ID"
-                    />
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Review Comments</label>
-                  <textarea
-                    value={reviewData.reviewComment}
-                    onChange={(e) => setReviewData({ ...reviewData, reviewComment: e.target.value })}
-                    rows={4}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-                    placeholder="Add your review comments here"
-                  />
-                </div>
-
-                <div className="pt-4 flex space-x-4">
-                  <button
-                    onClick={() => setSelectedArticle(null)}
-                    className="px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleReviewSubmit}
-                    disabled={submittingReview}
-                    className="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {submittingReview ? 'Submitting...' : 'Submit Review'}
-                  </button>
                 </div>
               </div>
-            </div>
+            </>
           ) : (
-            <div className="bg-white rounded-lg shadow-md p-6 text-center">
-              <p className="text-gray-500">Select an article from the queue to review</p>
+            <div className={styles.emptyState}>
+              <p>Select an article from the queue to review</p>
             </div>
           )}
         </div>
