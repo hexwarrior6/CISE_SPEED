@@ -416,7 +416,7 @@ describe('ArticleService', () => {
 
       const result = await service.findAll();
 
-      expect(mockArticleModel.find).toHaveBeenCalledWith({});
+      expect(mockArticleModel.find).toHaveBeenCalledWith({ status: ArticleStatus.APPROVED });
       expect(mockArticleModel.sort).toHaveBeenCalledWith({ createdAt: -1 });
       expect(result).toEqual(mockArticles);
     });
@@ -445,6 +445,162 @@ describe('ArticleService', () => {
       expect(mockArticleModel.find).toHaveBeenCalledWith({ status: ArticleStatus.PENDING });
       expect(mockArticleModel.sort).toHaveBeenCalledWith({ createdAt: -1 });
       expect(result).toEqual(mockArticles);
+    });
+  });
+
+  describe('findArticlesBySimilarDOI', () => {
+    it('should find articles with exact DOI match', async () => {
+      const mockArticle = {
+        customId: '1',
+        title: 'Test Article',
+        doi: '10.1000/test-doi',
+        authors: 'John Doe',
+        source: 'Journal of Testing',
+        pubyear: '2020',
+        claim: 'Test claim',
+        evidence: EvidenceType.WEAK_AGAINST,
+        status: ArticleStatus.APPROVED,
+      };
+
+      (mockArticleModel.find as jest.Mock).mockReturnThis();
+      (mockArticleModel.exec as jest.Mock).mockResolvedValue([mockArticle]);
+
+      const result = await service.findArticlesBySimilarDOI('10.1000/test-doi');
+
+      expect(mockArticleModel.find).toHaveBeenCalledWith({ doi: '10.1000/test-doi' });
+      expect(result).toEqual([mockArticle]);
+    });
+
+    it('should find articles with exact DOI match excluding specified ID', async () => {
+      const mockArticle = {
+        customId: '2',
+        title: 'Test Article',
+        doi: '10.1000/test-doi',
+        authors: 'John Doe',
+        source: 'Journal of Testing',
+        pubyear: '2020',
+        claim: 'Test claim',
+        evidence: EvidenceType.WEAK_AGAINST,
+        status: ArticleStatus.APPROVED,
+      };
+
+      (mockArticleModel.find as jest.Mock).mockReturnThis();
+      (mockArticleModel.exec as jest.Mock).mockResolvedValue([mockArticle]);
+
+      const result = await service.findArticlesBySimilarDOI('10.1000/test-doi', '1');
+
+      expect(mockArticleModel.find).toHaveBeenCalledWith({
+        doi: '10.1000/test-doi',
+        customId: { $ne: '1' },
+      });
+      expect(result).toEqual([mockArticle]);
+    });
+
+    it('should find articles with similar DOI when no exact match', async () => {
+      const mockArticle = {
+        customId: '2',
+        title: 'Similar Article',
+        doi: '10.1000/test-doi-alt',
+        authors: 'Jane Smith',
+        source: 'Journal of Testing',
+        pubyear: '2021',
+        claim: 'Test claim',
+        evidence: EvidenceType.WEAK_AGAINST,
+        status: ArticleStatus.APPROVED,
+      };
+
+      const mockChain = {
+        find: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        exec: jest.fn(),
+      };
+
+      // Mock the model.find to return our chain
+      const findMock = jest.fn();
+      findMock.mockReturnValue(mockChain);
+      mockArticleModel.find = findMock;
+
+      // First call: find with doi field (exact match) returns empty
+      // Second call: find with regex query (similar match) returns mock article
+      findMock
+        .mockImplementationOnce(() => ({ ...mockChain, exec: jest.fn().mockResolvedValue([]) })) // Exact match returns []
+        .mockImplementationOnce(() => ({ ...mockChain, limit: jest.fn().mockReturnThis(), exec: jest.fn().mockResolvedValue([mockArticle]) })); // Similar match returns article
+
+      const result = await service.findArticlesBySimilarDOI('10.1000/test-doi');
+
+      expect(result).toEqual([mockArticle]);
+    });
+
+    it('should find articles with similar DOI excluding specified ID', async () => {
+      const mockArticle = {
+        customId: '3',
+        title: 'Similar Article',
+        doi: '10.1000/test-doi-alt',
+        authors: 'Jane Smith',
+        source: 'Journal of Testing',
+        pubyear: '2021',
+        claim: 'Test claim',
+        evidence: EvidenceType.WEAK_AGAINST,
+        status: ArticleStatus.APPROVED,
+      };
+
+      const mockChain = {
+        find: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        exec: jest.fn(),
+      };
+
+      // Mock the model.find to return our chain
+      const findSpy = jest.spyOn(mockArticleModel, 'find').mockImplementation((query) => {
+        if (query.doi && typeof query.doi === 'string') {
+          // This is the exact match query
+          mockChain.exec = jest.fn().mockResolvedValue([]);
+        } else if (query.doi && query.doi.$regex) {
+          // This is the similar match query
+          mockChain.limit = jest.fn().mockReturnThis();
+          mockChain.exec = jest.fn().mockResolvedValue([mockArticle]);
+        }
+        return mockChain;
+      });
+
+      const result = await service.findArticlesBySimilarDOI('10.1000/test-doi', '1');
+
+      expect(findSpy).toHaveBeenCalledWith({
+        doi: '10.1000/test-doi',
+        customId: { $ne: '1' },
+      });
+      expect(findSpy).toHaveBeenCalledWith({
+        doi: { $regex: '10.1000', $options: 'i' },
+        customId: { $ne: '1' },
+      });
+      expect(result).toEqual([mockArticle]);
+      findSpy.mockRestore();
+    });
+
+    it('should return empty array when no matches found', async () => {
+      const mockChain = {
+        find: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        exec: jest.fn(),
+      };
+
+      // Mock the model.find to return our chain
+      const findSpy = jest.spyOn(mockArticleModel, 'find').mockImplementation((query) => {
+        if (query.doi && typeof query.doi === 'string') {
+          // This is the exact match query
+          mockChain.exec = jest.fn().mockResolvedValue([]);
+        } else if (query.doi && query.doi.$regex) {
+          // This is the similar match query
+          mockChain.limit = jest.fn().mockReturnThis();
+          mockChain.exec = jest.fn().mockResolvedValue([]);
+        }
+        return mockChain;
+      });
+
+      const result = await service.findArticlesBySimilarDOI('10.1000/nonexistent-doi');
+
+      expect(result).toEqual([]);
+      findSpy.mockRestore();
     });
   });
 });

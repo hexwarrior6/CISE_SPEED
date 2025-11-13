@@ -30,7 +30,7 @@ const ModeratorPage: React.FC = () => {
         <title>Moderator Queue - CISE SPEED</title>
         <meta name="description" content="Review and moderate submitted SE Evidence articles" />
       </Head>
-      <main className="min-h-screen bg-gray-50 py-12">
+      <main className="min-h-screen bg-gray-50 py-4">
         <div className="container mx-auto px-4">
           <ModeratorQueue />
         </div>

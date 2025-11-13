@@ -150,19 +150,37 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">
-        Submit SE Evidence Article
-      </h1>
-
+    <div>
       {success && (
-        <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-md">
+        <div className={`alert alert-success mb-md`}>
+          <svg
+            className="alert-icon"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clipRule="evenodd"
+            />
+          </svg>
           {success}
         </div>
       )}
 
       {error && (
-        <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-md">
+        <div className={`alert alert-error mb-md`}>
+          <svg
+            className="alert-icon"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clipRule="evenodd"
+            />
+          </svg>
           {error}
         </div>
       )}
@@ -183,153 +201,123 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
         onSubmit={handleSubmit}
       >
         {(props: FormikProps<ArticleFormData>) => (
-          <Form className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
+          <Form>
+            <div className="d-flex gap-lg">
+              <div className="flex-1">
                 <div style={{ display: "none" }}>
                   <Field id="customId" name="customId" defaultValue="" />
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="title"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Title *
+                <div className="form-group">
+                  <label htmlFor="title" className="form-label">
+                    Title <span style={{ color: 'var(--error-500)' }}>*</span>
                   </label>
                   <Field
                     id="title"
                     name="title"
-                    className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      props.errors.title && props.touched.title
-                        ? "border-red-500"
-                        : ""
+                    className={`form-input ${
+                      props.errors.title && props.touched.title ? 'is-invalid' : ''
                     }`}
                     placeholder="Title of the article"
                   />
                   <ErrorMessage
                     name="title"
                     component="div"
-                    className="mt-1 text-sm text-red-600"
+                    className="mt-sm text-sm text-red-600"
                   />
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="authors"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Authors *
+                <div className="form-group">
+                  <label htmlFor="authors" className="form-label">
+                    Authors <span style={{ color: 'var(--error-500)' }}>*</span>
                   </label>
                   <Field
                     id="authors"
                     name="authors"
-                    className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      props.errors.authors && props.touched.authors
-                        ? "border-red-500"
-                        : ""
+                    className={`form-input ${
+                      props.errors.authors && props.touched.authors ? 'is-invalid' : ''
                     }`}
                     placeholder="Author names (comma separated)"
                   />
                   <ErrorMessage
                     name="authors"
                     component="div"
-                    className="mt-1 text-sm text-red-600"
+                    className="mt-sm text-sm text-red-600"
                   />
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="source"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Source *
+                <div className="form-group">
+                  <label htmlFor="source" className="form-label">
+                    Source <span style={{ color: 'var(--error-500)' }}>*</span>
                   </label>
                   <Field
                     id="source"
                     name="source"
-                    className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      props.errors.source && props.touched.source
-                        ? "border-red-500"
-                        : ""
+                    className={`form-input ${
+                      props.errors.source && props.touched.source ? 'is-invalid' : ''
                     }`}
                     placeholder="Journal/Conference name"
                   />
                   <ErrorMessage
                     name="source"
                     component="div"
-                    className="mt-1 text-sm text-red-600"
+                    className="mt-sm text-sm text-red-600"
                   />
                 </div>
-              </div>
 
-              <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="pubyear"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Publication Year *
+                <div className="form-group">
+                  <label htmlFor="pubyear" className="form-label">
+                    Publication Year <span style={{ color: 'var(--error-500)' }}>*</span>
                   </label>
                   <Field
                     id="pubyear"
                     name="pubyear"
-                    className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      props.errors.pubyear && props.touched.pubyear
-                        ? "border-red-500"
-                        : ""
+                    className={`form-input ${
+                      props.errors.pubyear && props.touched.pubyear ? 'is-invalid' : ''
                     }`}
                     placeholder="YYYY"
                   />
                   <ErrorMessage
                     name="pubyear"
                     component="div"
-                    className="mt-1 text-sm text-red-600"
+                    className="mt-sm text-sm text-red-600"
                   />
                 </div>
+              </div>
 
-                <div>
-                  <label
-                    htmlFor="doi"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    DOI *
+              <div className="flex-1">
+                <div className="form-group">
+                  <label htmlFor="doi" className="form-label">
+                    DOI <span style={{ color: 'var(--error-500)' }}>*</span>
                   </label>
                   <Field
                     id="doi"
                     name="doi"
-                    className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      props.errors.doi && props.touched.doi
-                        ? "border-red-500"
-                        : ""
+                    className={`form-input ${
+                      props.errors.doi && props.touched.doi ? 'is-invalid' : ''
                     }`}
                     placeholder="10.xxxx/xxxxx"
                   />
                   <ErrorMessage
                     name="doi"
                     component="div"
-                    className="mt-1 text-sm text-red-600"
+                    className="mt-sm text-sm text-red-600"
                   />
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className="text-sm text-muted mt-sm">
                     DOI will be checked for duplicates
                   </p>
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="evidence"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Evidence Type *
+                <div className="form-group">
+                  <label htmlFor="evidence" className="form-label">
+                    Evidence Type <span style={{ color: 'var(--error-500)' }}>*</span>
                   </label>
                   <Field
                     as="select"
                     id="evidence"
                     name="evidence"
-                    className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      props.errors.evidence && props.touched.evidence
-                        ? "border-red-500"
-                        : ""
+                    className={`form-select ${
+                      props.errors.evidence && props.touched.evidence ? 'is-invalid' : ''
                     }`}
                   >
                     <option value="">Select evidence type</option>
@@ -342,71 +330,62 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
                   <ErrorMessage
                     name="evidence"
                     component="div"
-                    className="mt-1 text-sm text-red-600"
+                    className="mt-sm text-sm text-red-600"
                   />
                 </div>
-                <div>
-                  <label
-                    htmlFor="submitterEmail"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Email for Notifications *
+
+                <div className="form-group">
+                  <label htmlFor="submitterEmail" className="form-label">
+                    Email for Notifications <span style={{ color: 'var(--error-500)' }}>*</span>
                   </label>
                   <Field
                     id="submitterEmail"
                     name="submitterEmail"
                     type="email"
-                    className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      props.errors.submitterEmail &&
-                      props.touched.submitterEmail
-                        ? "border-red-500"
-                        : ""
+                    className={`form-input ${
+                      props.errors.submitterEmail && props.touched.submitterEmail ? 'is-invalid' : ''
                     }`}
                     placeholder="your.email@example.com"
                   />
                   <ErrorMessage
                     name="submitterEmail"
                     component="div"
-                    className="mt-1 text-sm text-red-600"
+                    className="mt-sm text-sm text-red-600"
                   />
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className="text-sm text-muted mt-sm">
                     You will receive review results at this email address
                   </p>
                 </div>
               </div>
             </div>
 
-            <div>
-              <label
-                htmlFor="claim"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Claim *
+            <div className="form-group mt-sm">
+              <label htmlFor="claim" className="form-label">
+                Claim <span style={{ color: 'var(--error-500)' }}>*</span>
               </label>
               <Field
                 as="textarea"
                 id="claim"
                 name="claim"
                 rows={4}
-                className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                  props.errors.claim && props.touched.claim
-                    ? "border-red-500"
-                    : ""
+                className={`form-textarea ${
+                  props.errors.claim && props.touched.claim ? 'is-invalid' : ''
                 }`}
                 placeholder="Describe the SE practice claim made in this article"
+                style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
               />
               <ErrorMessage
                 name="claim"
                 component="div"
-                className="mt-1 text-sm text-red-600"
+                className="mt-sm text-sm text-red-600"
               />
             </div>
 
-            <div className="pt-4">
+            <div className="mt-lg">
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn btn-primary"
               >
                 {submitting ? (
                   <>

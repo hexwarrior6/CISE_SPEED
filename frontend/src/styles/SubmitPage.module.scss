@@ -1,0 +1,155 @@
+.submitPage {
+  min-height: calc(100vh - 64px); // Full height minus navbar height
+  display: flex;
+  align-items: flex-start; // Align items to top instead of center
+  justify-content: center;
+  padding: 2rem 1rem;
+  background-color: #f9fafb; // Light gray background
+  padding-top: 2rem; // Ensure consistent top padding
+}
+
+.submitContainer {
+  width: 100%;
+  max-width: 800px; // Max width to ensure readability
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); // Soft shadow
+  overflow: hidden;
+}
+
+.header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f8fafc;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.formContainer {
+  padding: 2rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr; // Two column layout on medium screens and up
+  }
+}
+
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.input,
+.textarea,
+.select {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  
+  &:focus {
+    outline: none;
+    border-color: #3b82f6; // Blue focus border
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); // Blue focus ring
+  }
+  
+  &.error {
+    border-color: #ef4444; // Red border for errors
+  }
+}
+
+.textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.submitButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #3b82f6; // Blue background
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  
+  &:hover:not(:disabled) {
+    background-color: #2563eb; // Darker blue on hover
+  }
+  
+  &:disabled {
+    background-color: #9ca3af; // Gray when disabled
+    cursor: not-allowed;
+  }
+}
+
+.message {
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  
+  &.success {
+    background-color: #d1fae5; // Light green background
+    color: #065f46; // Dark green text
+    border: 1px solid #a7f3d0; // Green border
+  }
+  
+  &.error {
+    background-color: #fee2e2; // Light red background
+    color: #b91c1c; // Dark red text
+    border: 1px solid #fecaca; // Red border
+  }
+}
+
+.helpText {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.required {
+  color: #ef4444; // Red asterisk for required fields
+}
+
+.topSpacing {
+  padding-top: 1rem; // Equivalent to Tailwind's pt-4
+}
+
+.footer {
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #6b7280;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f8fafc;
+}
