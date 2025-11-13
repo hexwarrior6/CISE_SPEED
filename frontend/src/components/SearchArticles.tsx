@@ -384,7 +384,7 @@ const SearchArticles: React.FC = () => {
                     </td>
                     <td className={styles.claimCell}>{article.claim}</td>
                     <td className={styles.dateCell}>
-                      {new Date(article.createdAt).toLocaleDateString()}
+                      {article.createdAt ? new Date(article.createdAt).toLocaleDateString() : 'N/A'}
                     </td>
                   </tr>
                 ))}
