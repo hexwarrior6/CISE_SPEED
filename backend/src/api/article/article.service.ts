@@ -70,24 +70,27 @@ export class ArticleService {
   async submitArticle(createArticleDto: CreateArticleDto): Promise<Article> {
     let customId = createArticleDto.customId?.trim();
 
-    // If customId is not provided, generate an auto-incrementing ID
+    // If customId is not provided or is an empty string, generate an auto-incrementing ID
     if (!customId) {
-      // Get the highest existing ID number
-      const lastArticle = await this.articleModel
-        .findOne({})
-        .sort({ customId: -1 })
+      // Get the highest existing ID number, excluding empty string IDs and non-numeric IDs
+      const allArticles = await this.articleModel
+        .find({
+          customId: { $ne: '' }, // Exclude articles with empty customId
+        })
         .exec();
 
-      let nextId = 1;
-      if (lastArticle && lastArticle.customId) {
-        // Extract number from the last ID
-        const lastIdNum = parseInt(lastArticle.customId, 10);
-        if (!isNaN(lastIdNum)) {
-          nextId = lastIdNum + 1;
+      // Filter to only numeric IDs and find the highest
+      let maxId = 0;
+      for (const article of allArticles) {
+        if (article.customId) {
+          const idNum = parseInt(article.customId, 10);
+          if (!isNaN(idNum) && idNum > maxId) {
+            maxId = idNum;
+          }
         }
       }
 
-      customId = nextId.toString();
+      customId = (maxId + 1).toString();
     }
 
     // Check for duplicate by customId
