@@ -130,6 +130,8 @@ CISE_SPEED/
 - Sass for complex styling, Tailwind CSS for utility classes
 - Form validation with Yup and Formik
 - Git-based version control with .gitignore files in both subprojects
+- Design system: Use the unified styling system defined in `design-system.scss` for consistent UI components
+- Component styling: Always use CSS custom properties and predefined class names from the design system when creating new components
 
 ## Environment Configuration
 
@@ -155,6 +157,30 @@ The application requires environment variables for:
 
 - Backend: Jest-based unit and e2e tests
 - Frontend: Standard Next.js testing capabilities
+
+## Design System
+
+The frontend uses a comprehensive design system defined in `frontend/src/styles/design-system.scss` that provides:
+
+- CSS custom properties (variables) for consistent design tokens:
+  - Color palette (primary, secondary, neutral, success, warning, error)
+  - Typography (fonts, sizes, weights)
+  - Spacing
+  - Border radius
+  - Shadows
+  - Transitions
+- Reusable component classes:
+  - Buttons (btn, btn-primary, btn-secondary, btn-success)
+  - Form elements (form-group, form-label, form-input, form-select, form-textarea)
+  - Cards (card, card-header, card-body, card-title)
+  - Alerts (alert, alert-success, alert-error, alert-warning)
+  - Utility classes (text-center, d-flex, justify-content-center, etc.)
+
+When creating new components:
+- Always use CSS custom properties from the design system (e.g., `var(--primary-600)`, `var(--spacing-md)`)
+- Apply predefined class names from the design system when possible
+- Extend existing classes using Sass `@extend` directive when creating similar components
+- Follow the existing component structure and naming conventions
 
 ## Notes
 
