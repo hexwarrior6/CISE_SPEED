@@ -1,10 +1,11 @@
 .submitPage {
   min-height: calc(100vh - 64px); // Full height minus navbar height
   display: flex;
-  align-items: center;
+  align-items: flex-start; // Align items to top instead of center
   justify-content: center;
   padding: 2rem 1rem;
   background-color: #f9fafb; // Light gray background
+  padding-top: 2rem; // Ensure consistent top padding
 }
 
 .submitContainer {
@@ -138,6 +139,10 @@
 
 .required {
   color: #ef4444; // Red asterisk for required fields
+}
+
+.topSpacing {
+  padding-top: 1rem; // Equivalent to Tailwind's pt-4
 }
 
 .footer {

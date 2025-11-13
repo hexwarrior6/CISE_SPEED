@@ -243,9 +243,7 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
                     className="mt-1 text-sm text-red-600"
                   />
                 </div>
-              </div>
 
-              <div className={styles.formSection}>
                 <div className={styles.formGroup}>
                   <label htmlFor="pubyear" className={styles.label}>
                     Publication Year <span className={styles.required}>*</span>
@@ -264,6 +262,9 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
                     className="mt-1 text-sm text-red-600"
                   />
                 </div>
+              </div>
+
+              <div className={styles.formSection}>
 
                 <div className={styles.formGroup}>
                   <label htmlFor="doi" className={styles.label}>
@@ -338,7 +339,7 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
               </div>
             </div>
 
-            <div className={styles.formGroup}>
+            <div className={`${styles.formGroup} ${styles.topSpacing}`}>
               <label htmlFor="claim" className={styles.label}>
                 Claim <span className={styles.required}>*</span>
               </label>
@@ -359,7 +360,7 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
               />
             </div>
 
-            <div className="pt-4">
+            <div className={styles.topSpacing}>
               <button
                 type="submit"
                 disabled={submitting}
