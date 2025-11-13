@@ -68,16 +68,18 @@ $border-radius-sm: 8px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .statCard {
   background: white;
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: $border-radius-sm;
   box-shadow: $shadow;
   transition: $transition;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
   &:hover {
     box-shadow: $shadow-md;
@@ -86,19 +88,21 @@ $border-radius-sm: 8px;
 }
 
 .statValue {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
   color: $primary;
   line-height: 1;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
+  text-align: center;
 }
 
 .statLabel {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: $gray-600;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  text-align: center;
 }
 
 // ===== Main Content =====
@@ -107,7 +111,7 @@ $border-radius-sm: 8px;
   border-radius: $border-radius;
   box-shadow: $shadow-md;
   padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 // ===== Admin Options =====
@@ -121,7 +125,7 @@ $border-radius-sm: 8px;
   color: $gray-900;
   margin: 0 0 1rem 0;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid $gray-200;
+  border-bottom: 1px solid $gray-200;
 }
 
 .optionList {
@@ -173,7 +177,7 @@ $border-radius-sm: 8px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 }
 
 .dashboardCard {
