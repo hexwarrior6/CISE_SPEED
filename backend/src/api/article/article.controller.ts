@@ -10,7 +10,7 @@ import {
   Post,
   Put,
   Query,
-  Request
+  Request,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto, ReviewArticleDto } from './create-article.dto';
@@ -29,6 +29,8 @@ export class ArticleController {
   @Get('/')
   async findAll(@Query('status') status?: ArticleStatus) {
     try {
+      // If no status is specified, return only approved articles
+      // Otherwise, return articles with the specified status
       return await this.articleService.findAll(status);
     } catch (error) {
       throw new HttpException(
@@ -65,20 +67,23 @@ export class ArticleController {
 
   // Submit new article (Submitter feature)
   @Post('/submit')
-  async submitArticle(@Body() createArticleDto: CreateArticleDto, @Request() req) {
+  async submitArticle(
+    @Body() createArticleDto: CreateArticleDto,
+    @Request() req,
+  ) {
     try {
       // Add submitter information from authenticated user
       if (req.user) {
         createArticleDto.submitterId = req.user._id;
         createArticleDto.submitterEmail = req.user.email;
       }
-      
+
       const article = await this.articleService.submitArticle(createArticleDto);
-      
+
       return {
         message: 'Article submitted successfully',
         article,
-        notification: 'Email notification will be sent when review is complete'
+        notification: 'Email notification will be sent when review is complete',
       };
     } catch (error) {
       // Handle specific error types and pass appropriate messages to frontend
@@ -86,7 +91,7 @@ export class ArticleController {
         // Re-throw the HttpException as is to preserve status code and message
         throw error;
       }
-      
+
       // For other errors, wrap in HttpException with proper details
       throw new HttpException(
         {
@@ -124,23 +129,23 @@ export class ArticleController {
   // Review article (Moderator feature)
   @Post('/:id/review')
   async reviewArticle(
-    @Param('id') id: string, 
-    @Body() reviewData: ReviewArticleDto, 
-    @Request() req
+    @Param('id') id: string,
+    @Body() reviewData: ReviewArticleDto,
+    @Request() req,
   ) {
     try {
       // Get reviewer ID from authenticated user
       const reviewerId = req.user?._id || 'system';
-      
+
       const updatedArticle = await this.articleService.reviewArticle(
-        id, 
-        reviewData, 
-        reviewerId
+        id,
+        reviewData,
+        reviewerId,
       );
-      
+
       return {
         message: 'Article reviewed successfully',
-        article: updatedArticle
+        article: updatedArticle,
       };
     } catch (error) {
       throw new HttpException(
@@ -157,7 +162,7 @@ export class ArticleController {
   // Search articles (Searcher feature)
   @Get('/search/advanced')
   async searchArticles(
-    @Query('keywords') keywords: string, 
+    @Query('keywords') keywords: string,
     @Query('evidenceType') evidenceType?: string,
     @Query('sortBy') sortBy: string = 'createdAt',
     @Query('sortDirection') sortDirection: 'asc' | 'desc' = 'desc',
@@ -165,11 +170,11 @@ export class ArticleController {
     @Query('pubYearTo') pubYearTo?: string,
     @Query('authors') authors?: string,
     @Query('status') status?: string,
-    @Query('source') source?: string
+    @Query('source') source?: string,
   ) {
     try {
       return await this.articleService.searchArticles(
-        keywords, 
+        keywords,
         evidenceType,
         sortBy,
         sortDirection,
@@ -177,7 +182,7 @@ export class ArticleController {
         pubYearTo,
         authors,
         status as ArticleStatus,
-        source
+        source,
       );
     } catch (error) {
       throw new HttpException(
@@ -213,7 +218,8 @@ export class ArticleController {
   async checkDuplicates(@Body('doi') doi: string) {
     try {
       // Find similar articles by DOI
-      const similarArticles = await this.articleService.findArticlesBySimilarDOI(doi);
+      const similarArticles =
+        await this.articleService.findArticlesBySimilarDOI(doi);
       return similarArticles;
     } catch (error) {
       throw new HttpException(
