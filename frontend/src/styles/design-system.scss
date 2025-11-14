@@ -309,6 +309,14 @@ body {
   border: 1px solid var(--warning-200);
 }
 
+// Alert icon styling
+.alert-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
 // Utility classes
 .text-center {
   text-align: center;
@@ -348,6 +356,50 @@ body {
 
 .mt-lg {
   margin-top: var(--spacing-lg);
+}
+
+.ml-sm {
+  margin-left: var(--spacing-sm);
+}
+
+.mr-sm {
+  margin-right: var(--spacing-sm);
+}
+
+// Checkbox styling
+.form-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  border: 2px solid var(--neutral-400);
+  border-radius: var(--border-radius-sm);
+  appearance: none;
+  cursor: pointer;
+  position: relative;
+  transition: all var(--transition-fast);
+
+  &:checked {
+    background-color: var(--primary-600);
+    border-color: var(--primary-600);
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 1px;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  }
 }
 
 .d-flex {
