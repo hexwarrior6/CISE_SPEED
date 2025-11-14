@@ -50,11 +50,23 @@ const SearchArticles: React.FC = () => {
     const updatePosition = () => {
       if (showHistoryDropdown && searchInputRef.current) {
         const inputRect = searchInputRef.current.getBoundingClientRect();
-        setDropdownPosition({
-          top: inputRect.bottom + window.scrollY,
-          left: inputRect.left + window.scrollX,
-          width: inputRect.width,
-        });
+        // Calculate position relative to the offset parent instead of viewport
+        const offsetParent = searchInputRef.current.offsetParent as HTMLElement;
+        if (offsetParent) {
+          const parentRect = offsetParent.getBoundingClientRect();
+          setDropdownPosition({
+            top: inputRect.bottom - parentRect.top, // Position relative to parent
+            left: inputRect.left - parentRect.left, // Position relative to parent
+            width: inputRect.width,
+          });
+        } else {
+          // Fallback to document coordinates if no offset parent
+          setDropdownPosition({
+            top: inputRect.bottom + window.scrollY,
+            left: inputRect.left + window.scrollX,
+            width: inputRect.width,
+          });
+        }
       }
     };
 
@@ -225,46 +237,55 @@ const SearchArticles: React.FC = () => {
                   autoComplete="off"
                   ref={searchInputRef}
                 />
+                {/* This is where the dropdown would be rendered in the normal DOM */}
+                {/* The actual dropdown will be rendered in a portal-like fashion */}
                 {showHistoryDropdown && (
                   <div
-                    className={styles.searchHistoryDropdown}
-                    ref={dropdownRef}
-                    style={{
-                      top: `${dropdownPosition.top + 4}px`,  // Add 4px gap
-                      left: `${dropdownPosition.left}px`,
-                      width: `${dropdownPosition.width}px`,
-                    }}
+                    id="search-history-dropdown-portal"
+                    style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
                   >
-                    {searchHistory.length > 0 ? (
-                      <>
-                        <div className={styles.historyHeader}>
-                          <span>Recent Searches</span>
-                          <button
-                            className={styles.clearHistoryButton}
-                            onClick={handleClearHistory}
-                            aria-label="Clear search history"
-                          >
-                            Clear
-                          </button>
-                        </div>
-                        <ul className={styles.historyList}>
-                          {searchHistory.map((item, index) => (
-                            <li
-                              key={index}
-                              className={styles.historyItem}
-                              onClick={() => handleHistoryItemClick(item)}
+                    <div
+                      className={styles.searchHistoryDropdown}
+                      ref={dropdownRef}
+                      style={{
+                        top: `${dropdownPosition.top + 4}px`,  // Add 4px gap
+                        left: `${dropdownPosition.left}px`,
+                        width: `${dropdownPosition.width}px`,
+                        position: 'absolute',
+                        pointerEvents: 'auto',
+                      }}
+                    >
+                      {searchHistory.length > 0 ? (
+                        <>
+                          <div className={styles.historyHeader}>
+                            <span>Recent Searches</span>
+                            <button
+                              className={styles.clearHistoryButton}
+                              onClick={handleClearHistory}
+                              aria-label="Clear search history"
                             >
-                              <span className={styles.historyIcon}>🕒</span>
-                              <span className={styles.historyText}>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </>
-                    ) : (
-                      <div className={styles.noHistoryMessage}>
-                        <p>No recent searches</p>
-                      </div>
-                    )}
+                              Clear
+                            </button>
+                          </div>
+                          <ul className={styles.historyList}>
+                            {searchHistory.map((item, index) => (
+                              <li
+                                key={index}
+                                className={styles.historyItem}
+                                onClick={() => handleHistoryItemClick(item)}
+                              >
+                                <span className={styles.historyIcon}>🕒</span>
+                                <span className={styles.historyText}>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </>
+                      ) : (
+                        <div className={styles.noHistoryMessage}>
+                          <p>No recent searches</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               <button
@@ -281,6 +302,50 @@ const SearchArticles: React.FC = () => {
                   "Search"
                 )}
               </button>
+              {/* Search history dropdown positioned separately to avoid clipping */}
+              {showHistoryDropdown && (
+                <div
+                  className={styles.searchHistoryDropdown}
+                  ref={dropdownRef}
+                  style={{
+                    top: `${dropdownPosition.top + 4}px`,  // Add 4px gap
+                    left: `${dropdownPosition.left}px`,
+                    width: `${dropdownPosition.width}px`,
+                    position: 'absolute',
+                  }}
+                >
+                  {searchHistory.length > 0 ? (
+                    <>
+                      <div className={styles.historyHeader}>
+                        <span>Recent Searches</span>
+                        <button
+                          className={styles.clearHistoryButton}
+                          onClick={handleClearHistory}
+                          aria-label="Clear search history"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                      <ul className={styles.historyList}>
+                        {searchHistory.map((item, index) => (
+                          <li
+                            key={index}
+                            className={styles.historyItem}
+                            onClick={() => handleHistoryItemClick(item)}
+                          >
+                            <span className={styles.historyIcon}>🕒</span>
+                            <span className={styles.historyText}>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : (
+                    <div className={styles.noHistoryMessage}>
+                      <p>No recent searches</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
