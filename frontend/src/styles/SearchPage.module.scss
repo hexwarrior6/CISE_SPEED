@@ -445,6 +445,12 @@
   color: #374151;
 }
 
+.resultsActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .sortInfo {
   font-size: 0.875rem;
   color: #6b7280;
@@ -453,6 +459,36 @@
 .sortField {
   font-weight: 500;
   color: #374151;
+}
+
+.exportButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #10b981; // Green background
+  color: white;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s;
+
+  &:hover:not(:disabled) {
+    background-color: #059669; // Darker green on hover
+  }
+
+  &:disabled {
+    background-color: #9ca3af; // Gray when disabled
+    cursor: not-allowed;
+  }
+}
+
+.exportIcon {
+  width: 16px;
+  height: 16px;
 }
 
 .tableContainer {
