@@ -63,7 +63,7 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
     try {
       // Prepare the submission payload
       // If customId is empty, don't include it in the request so the backend can auto-generate it
-      let submissionValues;
+      let submissionValues: Partial<ArticleFormData> | ArticleFormData;
       if (!values.customId?.trim()) {
         // Omit customId if it's empty
         const { customId: _, ...valuesWithoutCustomId } = values;
@@ -73,20 +73,17 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
       }
 
       // Conditionally include submitterEmail based on user selection
-      let finalSubmissionValues;
+      let finalSubmissionValuesWithNotification;
       if (values.useEmailForNotification && user?.email) {
-        finalSubmissionValues = { ...submissionValues, submitterEmail: user.email };
+        finalSubmissionValuesWithNotification = { ...submissionValues, submitterEmail: user.email };
       } else {
-        finalSubmissionValues = { ...submissionValues, submitterEmail: '' };
+        finalSubmissionValuesWithNotification = { ...submissionValues, submitterEmail: '' };
       }
 
-      // Remove the useEmailForNotification field from the final submission
-      const { useEmailForNotification, ...cleanSubmissionValues } = finalSubmissionValues;
-
       // Check if ID already exists - only if customId is provided
-      if (cleanSubmissionValues.customId && cleanSubmissionValues.customId.trim()) {
+      if (finalSubmissionValuesWithNotification.customId && finalSubmissionValuesWithNotification.customId.trim()) {
         const idCheckResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/${cleanSubmissionValues.customId}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/${finalSubmissionValuesWithNotification.customId}`,
           {
             method: "GET",
             headers: {
@@ -97,10 +94,16 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
 
         if (idCheckResponse.ok) {
           throw new Error(
-            `Article with ID '${cleanSubmissionValues.customId}' already exists. Please choose a different ID.`
+            `Article with ID '${finalSubmissionValuesWithNotification.customId}' already exists. Please choose a different ID.`
           );
         }
       }
+
+      // Extract only the properties we need for the submission
+      const {
+        useEmailForNotification, // eslint-disable-line @typescript-eslint/no-unused-vars
+        ...cleanSubmissionValues
+      } = finalSubmissionValuesWithNotification;
 
       // Proceed with submission
       const response = await fetch(
