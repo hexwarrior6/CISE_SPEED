@@ -185,27 +185,30 @@
   border-radius: 8px;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   z-index: 1000; /* Higher z-index to appear above parent */
-  max-height: 300px;
+  max-height: 120px; /* Reduced height to ~2/3 of original, account for header and one line */
   overflow-y: auto;
+  min-width: 300px; /* Ensure minimum width for horizontal layout */
 }
 
 .historyHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 0.75rem; /* Reduced padding */
   border-bottom: 1px solid #e5e7eb;
   font-weight: 600;
   color: #374151;
   background-color: #f9fafb;
   border-radius: 8px 8px 0 0;
+  font-size: 0.875rem; /* Slightly smaller font */
 }
 
 .noHistoryMessage {
-  padding: 1rem;
+  padding: 0.75rem;
   text-align: center;
   color: #6b7280;
   font-style: italic;
+  font-size: 0.875rem; /* Match the header font size */
 }
 
 .clearHistoryButton {
@@ -213,8 +216,8 @@
   border: none;
   color: #3b82f6;
   cursor: pointer;
-  font-size: 0.875rem;
-  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem; /* Smaller font */
+  padding: 0.125rem 0.25rem; /* Reduced padding */
   border-radius: 4px;
 
   &:hover {
@@ -225,24 +228,67 @@
 .historyList {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0.5rem; /* Reduced from 0.75rem */
+  display: flex;
+  flex-wrap: nowrap; /* Only allow one line */
+  gap: 0.5rem;
+  overflow-x: auto; /* Allow horizontal scrolling if needed */
+  overflow-y: hidden;
+  max-height: 40px; /* Restrict to one line */
+  /* Add a subtle gradient to indicate scrollable content */
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c5c5c5;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #a0a0a0;
+  }
 }
 
 .historyItem {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem; /* Reduced padding */
   cursor: pointer;
-  border-bottom: 1px solid #f3f4f6;
+  background-color: #f3f4f6;
+  border-radius: 20px; /* Pill shape */
   transition: background-color 0.15s;
+  font-size: 0.8125rem; /* Slightly smaller font */
+  border: 1px solid #d1d5db;
 
   &:hover {
-    background-color: #f9fafb;
+    background-color: #e5e7eb;
   }
+}
 
-  &:last-child {
-    border-bottom: none;
+.removeHistoryButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: none;
+  background-color: #9ca3af; /* Gray background */
+  color: white;
+  cursor: pointer;
+  font-size: 10px;
+  line-height: 1;
+  padding: 0;
+
+  &:hover {
+    background-color: #6b7280; /* Darker gray on hover */
   }
 }
 
