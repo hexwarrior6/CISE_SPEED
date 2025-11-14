@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Article, ReviewData } from "../types/article";
+import { commentTemplates, CommentTemplate } from "../utils/commentTemplates";
 import styles from "../styles/ModeratorQueue.module.scss";
 
 const ModeratorQueue: React.FC = () => {
@@ -22,6 +23,7 @@ const ModeratorQueue: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<
     "all" | "duplicate" | "normal"
   >("all");
+  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
 
   useEffect(() => {
     fetchPendingArticles();
@@ -137,6 +139,18 @@ const ModeratorQueue: React.FC = () => {
     if (filterStatus === "normal") return !article.isDuplicate;
     return true;
   });
+
+  const applyTemplate = () => {
+    if (selectedTemplate) {
+      const template = commentTemplates.find(t => t.id === selectedTemplate);
+      if (template) {
+        setReviewData({
+          ...reviewData,
+          reviewComment: template.content
+        });
+      }
+    }
+  };
 
   const duplicateCount = articles.filter((a) => a.isDuplicate).length;
 
@@ -642,7 +656,32 @@ const ModeratorQueue: React.FC = () => {
                   )}
 
                   <div className={styles.inputGroup}>
-                    <label>Review Comments</label>
+                    <div className={styles.templateControls}>
+                      <label htmlFor="comment-template">Review Comments</label>
+                      <div className={styles.templateSelector}>
+                        <select
+                          id="comment-template"
+                          value={selectedTemplate}
+                          onChange={(e) => setSelectedTemplate(e.target.value)}
+                          className={styles.templateSelect}
+                        >
+                          <option value="">Select a template...</option>
+                          {commentTemplates.map((template) => (
+                            <option key={template.id} value={template.id}>
+                              {template.name}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          type="button"
+                          onClick={applyTemplate}
+                          disabled={!selectedTemplate}
+                          className={`${styles.applyTemplateBtn} ${!selectedTemplate ? styles.disabled : ''}`}
+                        >
+                          Apply Template
+                        </button>
+                      </div>
+                    </div>
                     <textarea
                       value={reviewData.reviewComment}
                       onChange={(e) =>
