@@ -7,7 +7,7 @@ export class EmailService {
   private transporter: nodemailer.Transporter;
 
   constructor(private configService: ConfigService) {
-    // 从配置中获取邮箱相关设置
+    // Get email configuration from environment
     const emailHost = this.configService.get<string>('EMAIL_HOST');
     const emailPort = this.configService.get<number>('EMAIL_PORT');
     const emailUser = this.configService.get<string>('EMAIL_USER');
@@ -19,8 +19,8 @@ export class EmailService {
       port: emailPort,
       secure: emailSecure, // true for 465, false for other ports
       auth: {
-        user: emailUser, // 邮箱地址
-        pass: emailPassword, // 邮箱授权码
+        user: emailUser, // email address
+        pass: emailPassword, // email password/authorization code
       },
     });
   }
@@ -37,18 +37,18 @@ export class EmailService {
       const from = fromName ? `"${fromName}" <${emailUser}>` : emailUser;
 
       const mailOptions = {
-        from, // 发件人邮箱，包含可选的发件人名称
-        to, // 收件人邮箱
-        subject, // 邮件主题
-        text, // 纯文本内容（可选）
-        html, // HTML 内容
+        from, // sender email with optional name
+        to, // recipient email
+        subject, // email subject
+        text, // plain text content (optional)
+        html, // HTML content
       };
 
       const info = await this.transporter.sendMail(mailOptions);
-      console.log('邮件发送成功:', info.messageId);
+      console.log('Email sent successfully:', info.messageId);
       return true;
     } catch (error) {
-      console.error('邮件发送失败:', error);
+      console.error('Email sending failed:', error);
       return false;
     }
   }
@@ -65,18 +65,18 @@ export class EmailService {
       const from = fromName ? `"${fromName}" <${emailUser}>` : emailUser;
 
       const mailOptions = {
-        from, // 发件人邮箱，包含可选的发件人名称
-        to: to.join(', '), // 多个收件人
-        subject, // 邮件主题
-        text, // 纯文本内容（可选）
-        html, // HTML 内容
+        from, // sender email with optional name
+        to: to.join(', '), // multiple recipients
+        subject, // email subject
+        text, // plain text content (optional)
+        html, // HTML content
       };
 
       const info = await this.transporter.sendMail(mailOptions);
-      console.log('批量邮件发送成功:', info.messageId);
+      console.log('Bulk email sent successfully:', info.messageId);
       return true;
     } catch (error) {
-      console.error('批量邮件发送失败:', error);
+      console.error('Bulk email sending failed:', error);
       return false;
     }
   }

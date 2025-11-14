@@ -55,12 +55,12 @@ export class EmailController {
     if (result) {
       return {
         success: true,
-        message: '邮件发送成功',
+        message: 'Email sent successfully',
       };
     } else {
       return {
         success: false,
-        message: '邮件发送失败',
+        message: 'Email sending failed',
       };
     }
   }
@@ -74,12 +74,12 @@ export class EmailController {
     if (result) {
       return {
         success: true,
-        message: '批量邮件发送成功',
+        message: 'Bulk email sent successfully',
       };
     } else {
       return {
         success: false,
-        message: '批量邮件发送失败',
+        message: 'Bulk email sending failed',
       };
     }
   }
@@ -88,21 +88,21 @@ export class EmailController {
   async testEmail(@Query('to') to: string, @Query('fromName') fromName?: string) {
     const result = await this.emailService.sendMail(
       to,
-      '测试邮件',
-      '<h1>这是一封测试邮件</h1><p>邮件发送功能正常工作。</p>',
-      '这是一封测试邮件，邮件发送功能正常工作。',
+      'Test Email',
+      '<h1>This is a test email</h1><p>Email sending functionality is working properly.</p>',
+      'This is a test email, email sending functionality is working properly.',
       fromName,
     );
 
     if (result) {
       return {
         success: true,
-        message: '测试邮件发送成功',
+        message: 'Test email sent successfully',
       };
     } else {
       return {
         success: false,
-        message: '测试邮件发送失败',
+        message: 'Test email sending failed',
       };
     }
   }

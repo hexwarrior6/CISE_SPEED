@@ -4,11 +4,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Article, ArticleDocument, ArticleStatus } from './article.schema';
 import { CreateArticleDto, ReviewArticleDto } from './create-article.dto';
+import { EmailService } from '../../services/email.service';
 
 @Injectable()
 export class ArticleService {
   constructor(
     @InjectModel(Article.name) private articleModel: Model<ArticleDocument>,
+    private emailService: EmailService,
   ) {}
 
   // Get all articles (with optional filtering)
@@ -39,7 +41,10 @@ export class ArticleService {
   }
 
   // Find articles with similar DOIs (for duplicate checking)
-  async findArticlesBySimilarDOI(doi: string, excludeId?: string): Promise<Article[]> {
+  async findArticlesBySimilarDOI(
+    doi: string,
+    excludeId?: string,
+  ): Promise<Article[]> {
     // Query object to build the search criteria
     const query: any = { doi };
 
@@ -175,7 +180,10 @@ export class ArticleService {
       updateData['isDuplicate'] = true;
       // Prevent an article from being marked as duplicate of itself
       if (reviewData.duplicateOf === id) {
-        throw new HttpException('Cannot mark article as duplicate of itself', HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          'Cannot mark article as duplicate of itself',
+          HttpStatus.BAD_REQUEST,
+        );
       }
       updateData['duplicateOf'] = reviewData.duplicateOf;
     } else {
@@ -195,7 +203,96 @@ export class ArticleService {
       );
     }
 
+    // Send email notification to submitter
+    console.log(`Attempting to send notification email for article ${updatedArticle.customId} with status ${updatedArticle.status}`);
+    await this.sendReviewNotificationEmail(updatedArticle);
+
     return updatedArticle;
+  }
+
+  // Send email notification to submitter about article review status
+  private async sendReviewNotificationEmail(article: Article) {
+    console.log(`Processing notification for article ${article.customId} with status ${article.status} and submitter email ${article.submitterEmail}`);
+
+    if (!article.submitterEmail) {
+      console.warn(`No submitter email found for article ${article.customId}`);
+      return;
+    }
+
+    let subject = '';
+    let htmlContent = '';
+
+    // Determine the content based on the status
+    if (article.status === ArticleStatus.APPROVED) {
+      subject = 'Your Article Has Been Approved - CISE_SPEED';
+      htmlContent = `
+        <h2>Article Review Result Notification</h2>
+        <p>Hello,</p>
+        <p>Your article <strong>"${article.title}"</strong> has been approved and added to the database.</p>
+        <p><strong>Article Details:</strong></p>
+        <ul>
+          <li>Title: ${article.title}</li>
+          <li>ID: ${article.customId}</li>
+          <li>Authors: ${article.authors}</li>
+          <li>Publication Year: ${article.pubyear}</li>
+          <li>Evidence Type: ${article.evidence}</li>
+        </ul>
+        <p>Thank you for contributing to the CISE_SPEED database!</p>
+        <p>If you have any questions, please feel free to contact us.</p>
+      `;
+    } else if (article.status === ArticleStatus.REJECTED) {
+      subject = 'Article Review Result - CISE_SPEED';
+      htmlContent = `
+        <h2>Article Review Result Notification</h2>
+        <p>Hello,</p>
+        <p>Unfortunately, your article <strong>"${article.title}"</strong> did not pass the review.</p>
+
+        ${article.reviewComment ? `<p><strong>Review Comment:</strong> ${article.reviewComment}</p>` : ''}
+
+        <p><strong>Article Details:</strong></p>
+        <ul>
+          <li>Title: ${article.title}</li>
+          <li>ID: ${article.customId}</li>
+          <li>Authors: ${article.authors}</li>
+          <li>Publication Year: ${article.pubyear}</li>
+        </ul>
+        <p>Thank you for your interest and contribution to the CISE_SPEED database!</p>
+        <p>If you have any questions, please feel free to contact us.</p>
+      `;
+    } else {
+      // For other status changes (like back to PENDING), we could send a generic notification
+      console.log(
+        `Article ${article.customId} status changed to ${article.status}, no email notification required.`,
+      );
+      return;
+    }
+
+    console.log(`Attempting to send email to ${article.submitterEmail} with subject: ${subject}`);
+
+    try {
+      const result = await this.emailService.sendMail(
+        article.submitterEmail,
+        subject,
+        htmlContent,
+        `CISE_SPEED: Your article "${article.title}" has been reviewed`, // text
+        'CISE_SPEED System', // fromName
+      );
+
+      if (result) {
+        console.log(
+          `Notification email sent successfully to ${article.submitterEmail} for article ${article.customId}`,
+        );
+      } else {
+        console.error(
+          `Failed to send notification email to ${article.submitterEmail} for article ${article.customId}`,
+        );
+      }
+    } catch (error) {
+      console.error(
+        `Error sending notification email to ${article.submitterEmail} for article ${article.customId}:`,
+        error,
+      );
+    }
   }
 
   // Search articles by keywords and filters with sorting
