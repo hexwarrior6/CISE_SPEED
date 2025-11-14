@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Article, EvidenceType, ArticleStatus } from "../types/article";
 import styles from "../styles/SearchPage.module.scss";
 
-// Enhanced search functionality with real-time suggestions
+// Enhanced search functionality with real-time suggestions and search history
 
 const SearchArticles: React.FC = () => {
   const [keywords, setKeywords] = useState("");
@@ -19,6 +19,66 @@ const SearchArticles: React.FC = () => {
   const [sortField, setSortField] = useState<keyof Article>("createdAt");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [showHistoryDropdown, setShowHistoryDropdown] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Load search history from localStorage on component mount
+  useEffect(() => {
+    const savedHistory = localStorage.getItem('searchHistory');
+    if (savedHistory) {
+      try {
+        const history = JSON.parse(savedHistory);
+        if (Array.isArray(history)) {
+          setSearchHistory(history);
+        }
+      } catch (e) {
+        console.error('Error parsing search history from localStorage:', e);
+      }
+    }
+  }, []);
+
+  // Save search history to localStorage whenever searchHistory changes
+  useEffect(() => {
+    localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+  }, [searchHistory]);
+
+  // Update dropdown position when it's shown or when the window is resized
+  useEffect(() => {
+    const updatePosition = () => {
+      if (showHistoryDropdown && searchInputRef.current) {
+        const inputRect = searchInputRef.current.getBoundingClientRect();
+        setDropdownPosition({
+          top: inputRect.bottom + window.scrollY,
+          left: inputRect.left + window.scrollX,
+          width: inputRect.width,
+        });
+      }
+    };
+
+    // Only update position when dropdown is shown
+    if (showHistoryDropdown) {
+      // Use setTimeout to ensure element is rendered before calculating position
+      setTimeout(updatePosition, 0);
+    }
+
+    // Add event listeners for scroll and resize to update position
+    const handleScrollAndResize = () => {
+      if (showHistoryDropdown) {
+        updatePosition();
+      }
+    };
+
+    window.addEventListener('scroll', handleScrollAndResize);
+    window.addEventListener('resize', handleScrollAndResize);
+
+    return () => {
+      window.removeEventListener('scroll', handleScrollAndResize);
+      window.removeEventListener('resize', handleScrollAndResize);
+    };
+  }, [showHistoryDropdown]);
 
   // Enhanced search function with debouncing
   useEffect(() => {
@@ -36,6 +96,15 @@ const SearchArticles: React.FC = () => {
     setLoading(true);
     setError(null);
     setSearchPerformed(true);
+
+    // Add to search history if the search term is not already in the history
+    if (keywords.trim()) {
+      setSearchHistory(prev => {
+        const newHistory = prev.filter(item => item.toLowerCase() !== keywords.trim().toLowerCase());
+        // Limit history to 10 items
+        return [keywords.trim(), ...newHistory].slice(0, 10);
+      });
+    }
 
     try {
       const params = new URLSearchParams();
@@ -79,6 +148,20 @@ const SearchArticles: React.FC = () => {
     }
   };
 
+  const handleHistoryItemClick = (searchTerm: string) => {
+    setKeywords(searchTerm);
+    setShowHistoryDropdown(false);
+    // Focus the search input after setting the value
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  };
+
+  const handleClearHistory = () => {
+    setSearchHistory([]);
+    localStorage.removeItem('searchHistory');
+  };
+
   // Handle table sorting
   const handleSort = (field: keyof Article) => {
     if (sortField === field) {
@@ -103,6 +186,22 @@ const SearchArticles: React.FC = () => {
     setSearchPerformed(false);
   };
 
+  // Close the dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (searchInputRef.current && !searchInputRef.current.contains(target) &&
+          dropdownRef.current && !dropdownRef.current.contains(target)) {
+        setShowHistoryDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       {/* Search Form Container */}
@@ -112,16 +211,62 @@ const SearchArticles: React.FC = () => {
           {/* Main Search Bar */}
           <div className={styles.mainSearchSection}>
             <div className={styles.searchBarContainer}>
-              <input
-                id="keywords"
-                type="text"
-                value={keywords}
-                onChange={(e) => setKeywords(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className={styles.mainSearchInput}
-                placeholder="Enter keywords to search across titles, authors, and claims..."
-                aria-label="Search keywords"
-              />
+                <input
+                  id="keywords"
+                  type="text"
+                  value={keywords}
+                  onChange={(e) => setKeywords(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  onFocus={() => setShowHistoryDropdown(true)}
+                  onClick={() => setShowHistoryDropdown(true)}
+                  className={styles.mainSearchInput}
+                  placeholder="Enter keywords to search across titles, authors, and claims..."
+                  aria-label="Search keywords"
+                  autoComplete="off"
+                  ref={searchInputRef}
+                />
+                {showHistoryDropdown && (
+                  <div
+                    className={styles.searchHistoryDropdown}
+                    ref={dropdownRef}
+                    style={{
+                      top: `${dropdownPosition.top + 4}px`,  // Add 4px gap
+                      left: `${dropdownPosition.left}px`,
+                      width: `${dropdownPosition.width}px`,
+                    }}
+                  >
+                    {searchHistory.length > 0 ? (
+                      <>
+                        <div className={styles.historyHeader}>
+                          <span>Recent Searches</span>
+                          <button
+                            className={styles.clearHistoryButton}
+                            onClick={handleClearHistory}
+                            aria-label="Clear search history"
+                          >
+                            Clear
+                          </button>
+                        </div>
+                        <ul className={styles.historyList}>
+                          {searchHistory.map((item, index) => (
+                            <li
+                              key={index}
+                              className={styles.historyItem}
+                              onClick={() => handleHistoryItemClick(item)}
+                            >
+                              <span className={styles.historyIcon}>🕒</span>
+                              <span className={styles.historyText}>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    ) : (
+                      <div className={styles.noHistoryMessage}>
+                        <p>No recent searches</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               <button
                 onClick={handleSearch}
                 disabled={loading}

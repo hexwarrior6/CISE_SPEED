@@ -160,6 +160,7 @@
 .searchBarContainer {
   display: flex;
   gap: 0.5rem;
+  position: relative; /* Make this the positioning context for dropdown */
 }
 
 .mainSearchInput {
@@ -175,6 +176,78 @@
     border-color: #3b82f6; // Blue focus border
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); // Blue focus ring
   }
+}
+
+.searchHistoryDropdown {
+  position: fixed; /* Fixed position to escape parent containers and position absolutely */
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  z-index: 1000; /* Higher z-index to appear above parent */
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.historyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  color: #374151;
+  background-color: #f9fafb;
+  border-radius: 8px 8px 0 0;
+}
+
+.noHistoryMessage {
+  padding: 1rem;
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.clearHistoryButton {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: #eff6ff;
+  }
+}
+
+.historyList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.historyItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.15s;
+
+  &:hover {
+    background-color: #f9fafb;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.historyIcon {
+  font-size: 1rem;
 }
 
 .mainSearchButton {
