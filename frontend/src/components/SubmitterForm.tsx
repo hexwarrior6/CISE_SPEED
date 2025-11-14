@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage, FormikProps } from "formik";
 import * as Yup from "yup";
 import { EvidenceType } from "../types/article";
+import { useAuth } from "../contexts/AuthContext";
 
 interface ArticleFormData {
   customId: string;
@@ -12,7 +13,7 @@ interface ArticleFormData {
   doi: string;
   claim: string;
   evidence: string;
-  submitterEmail: string;
+  useEmailForNotification: boolean;
 }
 
 interface SubmitArticleProps {
@@ -45,15 +46,14 @@ const validationSchema = Yup.object().shape({
     .required("Claim is required")
     .min(10, "Claim must be at least 10 characters long"),
   evidence: Yup.string().required("Evidence type is required"),
-  submitterEmail: Yup.string()
-    .required("Email is required for notification of review results")
-    .email("Please enter a valid email address"),
+  useEmailForNotification: Yup.boolean(),
 });
 
 const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const { user } = useAuth();
 
   const handleSubmit = async (values: ArticleFormData) => {
     setSubmitting(true);
@@ -61,10 +61,29 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
     setSuccess(null);
 
     try {
+      // Prepare the submission payload
+      // If customId is empty, don't include it in the request so the backend can auto-generate it
+      let submissionValues: Partial<ArticleFormData> | ArticleFormData;
+      if (!values.customId?.trim()) {
+        // Omit customId if it's empty
+        const { customId: _, ...valuesWithoutCustomId } = values;
+        submissionValues = valuesWithoutCustomId;
+      } else {
+        submissionValues = values;
+      }
+
+      // Conditionally include submitterEmail based on user selection
+      let finalSubmissionValuesWithNotification;
+      if (values.useEmailForNotification && user?.email) {
+        finalSubmissionValuesWithNotification = { ...submissionValues, submitterEmail: user.email };
+      } else {
+        finalSubmissionValuesWithNotification = { ...submissionValues, submitterEmail: '' };
+      }
+
       // Check if ID already exists - only if customId is provided
-      if (values.customId && values.customId.trim()) {
+      if (finalSubmissionValuesWithNotification.customId && finalSubmissionValuesWithNotification.customId.trim()) {
         const idCheckResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/${values.customId}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/${finalSubmissionValuesWithNotification.customId}`,
           {
             method: "GET",
             headers: {
@@ -75,21 +94,16 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
 
         if (idCheckResponse.ok) {
           throw new Error(
-            `Article with ID '${values.customId}' already exists. Please choose a different ID.`
+            `Article with ID '${finalSubmissionValuesWithNotification.customId}' already exists. Please choose a different ID.`
           );
         }
       }
 
-      // Prepare the submission payload
-      // If customId is empty, don't include it in the request so the backend can auto-generate it
-      let submissionValues;
-      if (!values.customId?.trim()) {
-        // Omit customId if it's empty
-        const { customId: _, ...valuesWithoutCustomId } = values;
-        submissionValues = valuesWithoutCustomId;
-      } else {
-        submissionValues = values;
-      }
+      // Extract only the properties we need for the submission
+      const {
+        useEmailForNotification, // eslint-disable-line @typescript-eslint/no-unused-vars
+        ...cleanSubmissionValues
+      } = finalSubmissionValuesWithNotification;
 
       // Proceed with submission
       const response = await fetch(
@@ -100,7 +114,7 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify(submissionValues),
+          body: JSON.stringify(cleanSubmissionValues),
         }
       );
 
@@ -152,7 +166,7 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
   return (
     <div>
       {success && (
-        <div className={`alert alert-success mb-md`}>
+        <div className={`alert alert-success mb-md d-flex align-items-center`}>
           <svg
             className="alert-icon"
             fill="currentColor"
@@ -160,16 +174,16 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
           >
             <path
               fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 12.586 7.707 11.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
               clipRule="evenodd"
             />
           </svg>
-          {success}
+          <span>{success}</span>
         </div>
       )}
 
       {error && (
-        <div className={`alert alert-error mb-md`}>
+        <div className={`alert alert-error mb-md d-flex align-items-center`}>
           <svg
             className="alert-icon"
             fill="currentColor"
@@ -177,11 +191,11 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
           >
             <path
               fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 011.414 0L10 7.586l1.293-1.293a1 1 0 111.414 1.414L11.414 10l1.293 1.293a1 1 0 01-1.414 1.414L10 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L8.707 10 7.414 8.707a1 1 0 010-1.414z"
               clipRule="evenodd"
             />
           </svg>
-          {error}
+          <span>{error}</span>
         </div>
       )}
 
@@ -195,7 +209,7 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
           doi: "",
           claim: "",
           evidence: "",
-          submitterEmail: "",
+          useEmailForNotification: true, // Default to checked
         }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
@@ -335,26 +349,24 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="submitterEmail" className="form-label">
-                    Email for Notifications <span style={{ color: 'var(--error-500)' }}>*</span>
-                  </label>
-                  <Field
-                    id="submitterEmail"
-                    name="submitterEmail"
-                    type="email"
-                    className={`form-input ${
-                      props.errors.submitterEmail && props.touched.submitterEmail ? 'is-invalid' : ''
-                    }`}
-                    placeholder="your.email@example.com"
-                  />
-                  <ErrorMessage
-                    name="submitterEmail"
-                    component="div"
-                    className="mt-sm text-sm text-red-600"
-                  />
-                  <p className="text-sm text-muted mt-sm">
-                    You will receive review results at this email address
-                  </p>
+                  <label className="form-label">Email for Notifications</label>
+                  <div className="d-flex align-items-center">
+                    <Field
+                      id="useEmailForNotification"
+                      name="useEmailForNotification"
+                      type="checkbox"
+                      className="form-checkbox mr-sm"
+                      checked={props.values.useEmailForNotification}
+                    />
+                    <label
+                      htmlFor="useEmailForNotification"
+                      className="form-label mb-0"
+                      style={{ fontSize: 'var(--font-size-sm)' }}
+                    >
+                      Send notification to my registered email (
+                      {user?.email || 'No email found'} )
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>

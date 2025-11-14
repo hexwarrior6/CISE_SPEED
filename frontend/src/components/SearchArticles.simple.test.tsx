@@ -15,9 +15,14 @@ describe('SearchArticles Component', () => {
 
   test('renders search form correctly', () => {
     render(<SearchArticles />);
-    
-    expect(screen.getByText('Search SE Evidence Articles')).toBeInTheDocument();
-    expect(screen.getByLabelText('Keywords (Title, Authors, Claim)')).toBeInTheDocument();
+
+    // Check for the main search input with the placeholder text
+    expect(screen.getByPlaceholderText('Enter keywords to search across titles, authors, and claims...')).toBeInTheDocument();
+
+    // Check for the search button
     expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
+
+    // Check for the Advanced Filters header
+    expect(screen.getByText('Advanced Filters')).toBeInTheDocument();
   });
 });

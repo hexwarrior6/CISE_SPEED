@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Article, EvidenceType, ArticleStatus } from "../types/article";
+import { exportToCSV } from "../utils/csv.utils";
 import styles from "../styles/SearchPage.module.scss";
 
 // Enhanced search functionality with real-time suggestions and search history
@@ -542,9 +543,31 @@ const SearchArticles: React.FC = () => {
               <p className={styles.resultsCount}>
                 Found {results.length} results
               </p>
-              <div className={styles.sortInfo}>
-                Sorting: <span className={styles.sortField}>{sortField}</span>{" "}
-                {sortDirection === "asc" ? "↑" : "↓"}
+              <div className={styles.resultsActions}>
+                <div className={styles.sortInfo}>
+                  Sorting: <span className={styles.sortField}>{sortField}</span>{" "}
+                  {sortDirection === "asc" ? "↑" : "↓"}
+                </div>
+                <button
+                  onClick={() => exportToCSV(results, `search-results-${new Date().toISOString().slice(0, 10)}.csv`)}
+                  className={styles.exportButton}
+                  title="Export results to CSV"
+                >
+                  <svg
+                    className={styles.exportIcon}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                    />
+                  </svg>
+                  Export CSV
+                </button>
               </div>
             </div>
 
