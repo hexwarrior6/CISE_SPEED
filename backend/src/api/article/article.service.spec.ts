@@ -3,6 +3,8 @@ import { getModelToken } from '@nestjs/mongoose';
 import { ArticleService } from './article.service';
 import { Article, ArticleStatus, EvidenceType } from './article.schema';
 import { Model } from 'mongoose';
+import { EmailService } from '../../services/email.service';
+import { ConfigService } from '@nestjs/config';
 
 // Mock Article model
 const mockArticleModel = {
@@ -16,6 +18,17 @@ const mockArticleModel = {
   exec: jest.fn(),
 };
 
+// Mock EmailService
+const mockEmailService = {
+  sendMail: jest.fn().mockResolvedValue(true),
+  sendBulkMail: jest.fn().mockResolvedValue(true),
+};
+
+// Mock ConfigService
+const mockConfigService = {
+  get: jest.fn(),
+};
+
 describe('ArticleService', () => {
   let service: ArticleService;
   let model: Model<Article>;
@@ -27,6 +40,14 @@ describe('ArticleService', () => {
         {
           provide: getModelToken(Article.name),
           useValue: mockArticleModel,
+        },
+        {
+          provide: EmailService,
+          useValue: mockEmailService,
+        },
+        {
+          provide: ConfigService,
+          useValue: mockConfigService,
         },
       ],
     }).compile();
