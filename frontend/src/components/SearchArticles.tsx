@@ -114,8 +114,8 @@ const SearchArticles: React.FC = () => {
     if (keywords.trim()) {
       setSearchHistory(prev => {
         const newHistory = prev.filter(item => item.toLowerCase() !== keywords.trim().toLowerCase());
-        // Limit history to 10 items
-        return [keywords.trim(), ...newHistory].slice(0, 10);
+        // Limit history to 5 items to match the UI
+        return [keywords.trim(), ...newHistory].slice(0, 5);
       });
     }
 
@@ -269,14 +269,24 @@ const SearchArticles: React.FC = () => {
                             </button>
                           </div>
                           <ul className={styles.historyList}>
-                            {searchHistory.map((item, index) => (
+                            {searchHistory.slice(0, 5).map((item, index) => (  // Only show first 5 items
                               <li
                                 key={index}
                                 className={styles.historyItem}
                                 onClick={() => handleHistoryItemClick(item)}
                               >
-                                <span className={styles.historyIcon}>🕒</span>
                                 <span className={styles.historyText}>{item}</span>
+                                <button
+                                  className={styles.removeHistoryButton}
+                                  onClick={(e) => {
+                                    e.stopPropagation(); // Prevent triggering the parent onClick
+                                    // Filter by the actual item value, not by index, to handle removal correctly
+                                    setSearchHistory(prev => prev.filter(historyItem => historyItem !== item));
+                                  }}
+                                  aria-label={`Remove ${item} from history`}
+                                >
+                                  ×
+                                </button>
                               </li>
                             ))}
                           </ul>
@@ -328,14 +338,24 @@ const SearchArticles: React.FC = () => {
                         </button>
                       </div>
                       <ul className={styles.historyList}>
-                        {searchHistory.map((item, index) => (
+                        {searchHistory.slice(0, 5).map((item, index) => (  // Only show first 5 items
                           <li
                             key={index}
                             className={styles.historyItem}
                             onClick={() => handleHistoryItemClick(item)}
                           >
-                            <span className={styles.historyIcon}>🕒</span>
                             <span className={styles.historyText}>{item}</span>
+                            <button
+                              className={styles.removeHistoryButton}
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent triggering the parent onClick
+                                // Filter by the actual item value, not by index, to handle removal correctly
+                                setSearchHistory(prev => prev.filter(historyItem => historyItem !== item));
+                              }}
+                              aria-label={`Remove ${item} from history`}
+                            >
+                              ×
+                            </button>
                           </li>
                         ))}
                       </ul>
