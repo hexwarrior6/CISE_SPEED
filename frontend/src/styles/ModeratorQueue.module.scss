@@ -467,8 +467,8 @@ $border-radius-sm: 8px;
 
 // ===== Sections =====
 .section {
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
   border-bottom: 1px solid $gray-200;
 
   &:last-child {
@@ -801,7 +801,7 @@ $border-radius-sm: 8px;
 }
 
 .inputGroup {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   box-sizing: border-box;
 
   label {
@@ -809,7 +809,7 @@ $border-radius-sm: 8px;
     font-size: 0.875rem;
     font-weight: 600;
     color: $gray-700;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
   }
 }
 
@@ -818,7 +818,7 @@ $border-radius-sm: 8px;
   padding: 0.875rem;
   border: 2px solid $gray-200;
   border-radius: 8px;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   color: $gray-900;
   transition: $transition;
   font-family: inherit;
@@ -840,7 +840,7 @@ $border-radius-sm: 8px;
   padding: 0.875rem;
   border: 2px solid $gray-200;
   border-radius: 8px;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   color: $gray-900;
   transition: $transition;
   font-family: inherit;
@@ -862,8 +862,8 @@ $border-radius-sm: 8px;
 
 // ===== Submit Section =====
 .submitSection {
-  margin-top: 1.5rem;
-  padding-top: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 0.25rem;
   border-top: none;
 }
 
@@ -936,4 +936,74 @@ $border-radius-sm: 8px;
   width: 96px;
   height: 96px;
   color: $gray-300;
+}
+
+// ===== Template Controls =====
+.templateControls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+
+  label {
+    margin-bottom: 0;
+  }
+}
+
+.templateSelector {
+  display: flex;
+  gap: 0.75rem;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+  }
+}
+
+.templateSelect {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid $gray-200;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: $gray-900;
+  background-color: white;
+  transition: $transition;
+  font-family: inherit;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.1);
+  }
+}
+
+.applyTemplateBtn {
+  padding: 0.75rem 1rem;
+  background: $primary;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: $transition;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    background: $primary-dark;
+    box-shadow: $shadow-md;
+  }
+
+  &:disabled {
+    background: $gray-400;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &.disabled {
+    background: $gray-400;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
 }
