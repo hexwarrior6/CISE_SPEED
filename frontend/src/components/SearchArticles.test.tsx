@@ -3,9 +3,13 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import SearchArticles from "./SearchArticles";
 import { Article, EvidenceType, ArticleStatus } from "../types/article";
+import { useRouter } from "next/router";
 
 // Mock the fetch API
 global.fetch = jest.fn();
+
+// Mock the next router
+jest.mock("next/router", () => require("next-router-mock"));
 
 const mockArticles: Article[] = [
   {
