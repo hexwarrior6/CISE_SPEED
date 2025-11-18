@@ -640,10 +640,10 @@ const SearchArticles: React.FC = () => {
               <table className={styles.resultTable}>
                 <thead>
                   <tr>
-                    <th scope="col" onClick={() => handleSort("rating")}>
+                    <th scope="col" onClick={() => handleSort("averageRating")}>
                       <div className={styles.tableHeader}>
                         Rating
-                        {sortField === "rating" && (
+                        {sortField === "averageRating" && (
                           <span className={styles.sortIndicator}>
                             {sortDirection === "asc" ? "↑" : "↓"}
                           </span>

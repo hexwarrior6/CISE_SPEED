@@ -1,7 +1,7 @@
 // frontend/src/pages/user/ratings.tsx
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import styles from "../../styles/ArticlesPage.module.scss";
+import styles from "../styles/ArticlesPage.module.scss";
 import { useAuth } from "../contexts/AuthContext";
 import ArticleRating from "../components/ArticleRating";
 

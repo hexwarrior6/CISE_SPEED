@@ -377,6 +377,7 @@ export class ArticleService {
       'pubyear',
       'authors',
       'source',
+      'averageRating',
     ];
     if (allowedSortFields.includes(sortBy)) {
       sortObject[sortBy] = sortDirection;

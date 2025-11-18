@@ -31,6 +31,7 @@ export interface Article {
   submitterEmail?: string;
   reviewerId?: string;
   reviewComment?: string;
+  averageRating?: number;
   createdAt?: string;
   updatedAt?: string;
 }
