@@ -16,6 +16,7 @@ import {
 import { ArticleService } from './article.service';
 import { CreateArticleDto, ReviewArticleDto } from './create-article.dto';
 import { ArticleStatus } from './article.schema';
+import * as jwt from 'jsonwebtoken';
 
 @Controller('api/articles')
 export class ArticleController {
@@ -100,15 +101,34 @@ export class ArticleController {
   @Post(':id/rating')
   async addRating(
     @Param('id') id: string,
-    @Body() body: { userId: string; score: number }, // 修改参数结构
+    @Body() body: { score: number },
     @Request() req,
   ) {
-    if (!req.user) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
 
-    // 使用userId和score进行评分
-    return this.articleService.addRating(id, body.userId, body.score);
+    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+    let decodedToken;
+
+    try {
+      decodedToken = jwt.verify(token, process.env.JWT_SECRET || 'default_secret') as any;
+    } catch (error) {
+      throw new HttpException('Unauthorized - Invalid token', HttpStatus.UNAUTHORIZED);
+    }
+
+    // 检查用户角色 - 只有 Searcher 和 Analyst 可以评分
+    const allowedRoles = ['Searcher', 'Analyst'];
+    if (!allowedRoles.includes(decodedToken.role)) {
+      throw new HttpException(
+        'Access denied - Only Searcher and Analyst roles can rate articles',
+        HttpStatus.FORBIDDEN
+      );
+    }
+
+    // 使用认证用户的ID和评分进行评分
+    return this.articleService.addRating(id, decodedToken.sub, body.score);
   }
 
   @Put('/:id')

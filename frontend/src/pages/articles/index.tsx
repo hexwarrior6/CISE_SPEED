@@ -71,7 +71,7 @@ const Articles: NextPage<{ initialArticles?: Article[] }> = ({
     isAuthenticated && (user?.role === "Searcher" || user?.role === "Analyst");
 
   const headers: { key: string; label: string }[] = [
-    // 只有Searcher用户才显示评分列
+    // 只有Searcher和Analyst用户才显示评分列
     ...(showRatingColumn
       ? [{ key: "rating", label: "Rating(click to rate)" }]
       : []),

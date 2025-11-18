@@ -715,7 +715,7 @@ const SearchArticles: React.FC = () => {
                         <ArticleRating
                           customId={article.customId}
                           averageRating={article.averageRating}
-                          readonly={false}
+                          readonly={true}
                         />
                       </td>
                       <td className={styles.titleCell}>

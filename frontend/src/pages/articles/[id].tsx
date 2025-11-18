@@ -48,8 +48,8 @@ const ArticleDetailPage = () => {
     fetchArticle();
   }, [id]);
 
-  // 只有已认证的 Searcher 用户才能评分
-  const canRate = isAuthenticated && user?.role === "Searcher";
+  // 已认证的 Searcher 和 Analyst 用户都能评分
+  const canRate = isAuthenticated && (user?.role === "Searcher" || user?.role === "Analyst");
 
   if (loading) {
     return (

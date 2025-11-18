@@ -57,9 +57,9 @@ const ArticleRating: React.FC<ArticleRatingProps> = ({
       return;
     }
 
-    // 检查用户角色
-    if (user.role !== "Searcher") {
-      alert("只有Searcher角色可以进行评分");
+    // 检查用户角色 - Searcher 和 Analyst 都可以进行评分
+    if (user.role !== "Searcher" && user.role !== "Analyst") {
+      alert("只有Searcher和Analyst角色可以进行评分");
       return;
     }
 
@@ -74,7 +74,9 @@ const ArticleRating: React.FC<ArticleRatingProps> = ({
               "Content-Type": "application/json",
               Authorization: `Bearer ${access_token}`, // 使用 token 变量
             },
-            body: JSON.stringify({ rating }),
+            body: JSON.stringify({
+              score: rating
+            }),
           },
         );
 
