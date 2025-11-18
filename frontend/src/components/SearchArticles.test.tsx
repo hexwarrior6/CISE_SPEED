@@ -9,7 +9,9 @@ import { useRouter } from "next/router";
 global.fetch = jest.fn();
 
 // Mock the next router
-jest.mock("next/router", () => require("next-router-mock"));
+jest.mock("next/router", () => ({
+  ...jest.requireActual("next-router-mock"),
+}));
 
 const mockArticles: Article[] = [
   {
