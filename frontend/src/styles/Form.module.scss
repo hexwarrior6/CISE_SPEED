@@ -20,13 +20,13 @@
   font-family: var(--font-family-primary);
   background-color: white;
   transition: all var(--transition-fast);
-  
+
   &:focus {
     outline: none;
     border-color: var(--primary-500);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
   }
-  
+
   &:disabled {
     background-color: var(--neutral-100);
     cursor: not-allowed;
@@ -60,11 +60,11 @@
   cursor: pointer;
   border: none;
   outline: none;
-  
+
   &:focus {
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
   }
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -75,11 +75,11 @@
   @extend .btn;
   background-color: var(--primary-600);
   color: white;
-  
+
   &:hover:not(:disabled) {
     background-color: var(--primary-700);
   }
-  
+
   &:active:not(:disabled) {
     background-color: var(--primary-800);
   }
@@ -89,11 +89,11 @@
   @extend .btn;
   background-color: var(--neutral-200);
   color: var(--neutral-800);
-  
+
   &:hover:not(:disabled) {
     background-color: var(--neutral-300);
   }
-  
+
   &:active:not(:disabled) {
     background-color: var(--neutral-400);
   }

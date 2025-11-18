@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
-import { useAuth } from '@/contexts/AuthContext';
-import Link from 'next/link';
-import styles from './PopulatedNavBar.module.scss';
+import { useAuth } from "@/contexts/AuthContext";
+import Link from "next/link";
+import styles from "./PopulatedNavBar.module.scss";
 
 const PopulatedNavBar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -19,17 +19,23 @@ const PopulatedNavBar = () => {
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (adminDropdownRef.current && !adminDropdownRef.current.contains(event.target as Node)) {
+      if (
+        adminDropdownRef.current &&
+        !adminDropdownRef.current.contains(event.target as Node)
+      ) {
         setShowAdminDropdown(false);
       }
-      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
+      if (
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(event.target as Node)
+      ) {
         setShowUserDropdown(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -39,7 +45,7 @@ const PopulatedNavBar = () => {
         <Link href="/" className={styles.navBrand}>
           SPEED
         </Link>
-        
+
         <ul className={styles.navList}>
           <li className={styles.navItem}>
             <Link href="/" className={styles.navLink}>
@@ -56,65 +62,79 @@ const PopulatedNavBar = () => {
               Search
             </Link>
           </li>
-          
+
           {isAuthenticated && (
             <>
               {/* Submitter link for submitters */}
-              {(user?.role === 'Submitter' || user?.role === 'Administrator') && (
+              {(user?.role === "Submitter" ||
+                user?.role === "Administrator") && (
                 <li className={styles.navItem}>
                   <Link href="/submit" className={styles.navLink}>
                     Submit Article
                   </Link>
                 </li>
               )}
-              
+
               {/* Moderator link for moderators */}
-              {(user?.role === 'Moderator' || user?.role === 'Administrator') && (
+              {(user?.role === "Moderator" ||
+                user?.role === "Administrator") && (
                 <li className={styles.navItem}>
                   <Link href="/moderator" className={styles.navLink}>
                     Moderate Articles
                   </Link>
                 </li>
               )}
-              
+
               {/* Admin menu for administrators */}
-              {user?.role === 'Administrator' && (
+              {user?.role === "Administrator" && (
                 <li className={styles.navItem} ref={adminDropdownRef}>
-                  <div 
+                  <div
                     className={`${styles.navLink} ${styles.dropdownToggle}`}
                     onClick={() => setShowAdminDropdown(!showAdminDropdown)}
                   >
                     Admin <IoMdArrowDropdown />
                   </div>
-                  <div className={`${styles.dropdownMenu} ${showAdminDropdown ? styles.show : ''}`}>
-                    <Link href="/admin" className={styles.dropdownItem} onClick={() => setShowAdminDropdown(false)}>
+                  <div
+                    className={`${styles.dropdownMenu} ${showAdminDropdown ? styles.show : ""}`}
+                  >
+                    <Link
+                      href="/admin"
+                      className={styles.dropdownItem}
+                      onClick={() => setShowAdminDropdown(false)}
+                    >
                       Dashboard
                     </Link>
-                    <Link href="/admin/users" className={styles.dropdownItem} onClick={() => setShowAdminDropdown(false)}>
+                    <Link
+                      href="/admin/users"
+                      className={styles.dropdownItem}
+                      onClick={() => setShowAdminDropdown(false)}
+                    >
                       User Management
                     </Link>
                   </div>
                 </li>
               )}
-              
+
               <li className={styles.navItem} ref={userDropdownRef}>
-                <div 
+                <div
                   className={styles.userMenu}
                   onClick={() => setShowUserDropdown(!showUserDropdown)}
                 >
                   <div className={styles.userAvatar}>
-                    {user?.username?.charAt(0).toUpperCase() || 'U'}
+                    {user?.username?.charAt(0).toUpperCase() || "U"}
                   </div>
                   <IoMdArrowDropdown />
                 </div>
-                <div className={`${styles.dropdownMenu} ${showUserDropdown ? styles.show : ''}`}>
+                <div
+                  className={`${styles.dropdownMenu} ${showUserDropdown ? styles.show : ""}`}
+                >
                   <div className={styles.dropdownItem}>
                     {user?.username} ({user?.role})
                   </div>
-                  <div 
-                    className={styles.dropdownItem} 
+                  <div
+                    className={styles.dropdownItem}
                     onClick={handleLogout}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: "pointer" }}
                   >
                     Logout
                   </div>
@@ -122,7 +142,7 @@ const PopulatedNavBar = () => {
               </li>
             </>
           )}
-          
+
           {!isAuthenticated && (
             <>
               <li className={styles.navItem}>

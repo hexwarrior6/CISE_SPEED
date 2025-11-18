@@ -12,7 +12,8 @@ export class EmailService {
     const emailPort = this.configService.get<number>('EMAIL_PORT');
     const emailUser = this.configService.get<string>('EMAIL_USER');
     const emailPassword = this.configService.get<string>('EMAIL_PASSWORD');
-    const emailSecure = this.configService.get<string>('EMAIL_SECURE') === 'true';
+    const emailSecure =
+      this.configService.get<string>('EMAIL_SECURE') === 'true';
 
     this.transporter = nodemailer.createTransport({
       host: emailHost,

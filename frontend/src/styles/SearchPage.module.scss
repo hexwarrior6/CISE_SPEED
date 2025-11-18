@@ -39,14 +39,17 @@
   background: white;
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
   transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
   justify-content: center;
 
   &:hover {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
       0 2px 4px -1px rgba(0, 0, 0, 0.06);
     transform: translateY(-2px);
   }
@@ -74,7 +77,8 @@
 .mainContent {
   background: white;
   border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
@@ -169,7 +173,9 @@
   border: 1px solid #d1d5db;
   border-radius: 4px;
   font-size: 1rem;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
 
   &:focus {
     outline: none;
@@ -183,7 +189,9 @@
   background: white;
   border: 1px solid #d1d5db;
   border-radius: 8px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
   z-index: 1000; /* Higher z-index to appear above parent */
   max-height: 120px; /* Reduced height to ~2/3 of original, account for header and one line */
   overflow-y: auto;
@@ -302,7 +310,9 @@
   justify-content: center;
   gap: 0.25rem;
   padding: 0.75rem 1.5rem;
-  background-color: var(--primary-600); // Blue background (same as login button)
+  background-color: var(
+    --primary-600
+  ); // Blue background (same as login button)
   color: white;
   border: 1px solid transparent;
   border-radius: 4px;
@@ -333,7 +343,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .advancedFiltersSection {
@@ -412,7 +424,9 @@
   border: 1px solid #d1d5db;
   border-radius: 4px;
   font-size: 0.875rem;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
   box-sizing: border-box; /* Include padding and border in element's total width */
 
   &:focus {
@@ -448,7 +462,9 @@
 }
 
 .searchButton {
-  background-color: var(--primary-600); // Blue background (same as login button)
+  background-color: var(
+    --primary-600
+  ); // Blue background (same as login button)
   color: white;
 
   &:hover:not(:disabled) {

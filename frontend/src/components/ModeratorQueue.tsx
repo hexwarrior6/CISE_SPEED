@@ -16,14 +16,14 @@ const ModeratorQueue: React.FC = () => {
   });
   const [duplicateCheckLoading, setDuplicateCheckLoading] = useState(false);
   const [duplicateCheckResults, setDuplicateCheckResults] = useState<Article[]>(
-    []
+    [],
   );
   const [submittingReview, setSubmittingReview] = useState(false);
   const [reviewSuccess, setReviewSuccess] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<
     "all" | "duplicate" | "normal"
   >("all");
-  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
 
   useEffect(() => {
     fetchPendingArticles();
@@ -37,7 +37,7 @@ const ModeratorQueue: React.FC = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -68,9 +68,9 @@ const ModeratorQueue: React.FC = () => {
           },
           body: JSON.stringify({
             doi,
-            ...(currentId && { excludeId: currentId }) // Only include excludeId if currentId is provided
+            ...(currentId && { excludeId: currentId }), // Only include excludeId if currentId is provided
           }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -81,7 +81,7 @@ const ModeratorQueue: React.FC = () => {
       setDuplicateCheckResults(data);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to check duplicates"
+        err instanceof Error ? err.message : "Failed to check duplicates",
       );
     } finally {
       setDuplicateCheckLoading(false);
@@ -115,7 +115,7 @@ const ModeratorQueue: React.FC = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify(reviewData),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -142,11 +142,11 @@ const ModeratorQueue: React.FC = () => {
 
   const applyTemplate = () => {
     if (selectedTemplate) {
-      const template = commentTemplates.find(t => t.id === selectedTemplate);
+      const template = commentTemplates.find((t) => t.id === selectedTemplate);
       if (template) {
         setReviewData({
           ...reviewData,
-          reviewComment: template.content
+          reviewComment: template.content,
         });
       }
     }
@@ -224,7 +224,9 @@ const ModeratorQueue: React.FC = () => {
               <div className={styles.statLabel}>New Articles</div>
             </div>
             <div className={styles.statCard}>
-              <div className={styles.statValue}>{articles.length - duplicateCount}</div>
+              <div className={styles.statValue}>
+                {articles.length - duplicateCount}
+              </div>
               <div className={styles.statLabel}>Remaining Articles</div>
             </div>
           </div>
@@ -320,7 +322,7 @@ const ModeratorQueue: React.FC = () => {
                         />
                       </svg>
                       {new Date(
-                        article.createdAt || Date.now()
+                        article.createdAt || Date.now(),
                       ).toLocaleDateString()}
                     </span>
                     <span className={styles.metaItem}>
@@ -414,7 +416,12 @@ const ModeratorQueue: React.FC = () => {
                   <div className={styles.sectionHeader}>
                     <h3 className={styles.sectionTitle}>Duplicate Check</h3>
                     <button
-                      onClick={() => checkForDuplicates(selectedArticle.doi, selectedArticle.customId)}
+                      onClick={() =>
+                        checkForDuplicates(
+                          selectedArticle.doi,
+                          selectedArticle.customId,
+                        )
+                      }
                       disabled={duplicateCheckLoading}
                       className={styles.checkBtn}
                     >
@@ -518,27 +525,30 @@ const ModeratorQueue: React.FC = () => {
                     </div>
                   )}
 
-                  {duplicateCheckResults.length === 0 && !duplicateCheckLoading && selectedArticle && (
-                    <div className={styles.noDuplicatesFound}>
-                      <svg
-                        className={styles.successIcon}
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      <div>
-                        <strong>No Duplicates Found</strong>
-                        <p>
-                          This article appears to be original and not a duplicate of any existing articles.
-                        </p>
+                  {duplicateCheckResults.length === 0 &&
+                    !duplicateCheckLoading &&
+                    selectedArticle && (
+                      <div className={styles.noDuplicatesFound}>
+                        <svg
+                          className={styles.successIcon}
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        <div>
+                          <strong>No Duplicates Found</strong>
+                          <p>
+                            This article appears to be original and not a
+                            duplicate of any existing articles.
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
 
                 {/* Review Decision */}
@@ -676,7 +686,7 @@ const ModeratorQueue: React.FC = () => {
                           type="button"
                           onClick={applyTemplate}
                           disabled={!selectedTemplate}
-                          className={`${styles.applyTemplateBtn} ${!selectedTemplate ? styles.disabled : ''}`}
+                          className={`${styles.applyTemplateBtn} ${!selectedTemplate ? styles.disabled : ""}`}
                         >
                           Apply Template
                         </button>

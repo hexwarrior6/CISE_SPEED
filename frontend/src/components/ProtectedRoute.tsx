@@ -1,7 +1,7 @@
 // components/ProtectedRoute.tsx
-import { useAuth } from '../contexts/AuthContext';
-import { useRouter } from 'next/router';
-import { useEffect, ReactNode } from 'react';
+import { useAuth } from "../contexts/AuthContext";
+import { useRouter } from "next/router";
+import { useEffect, ReactNode } from "react";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -14,10 +14,10 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push('/login');
+      router.push("/login");
     } else if (allowedRoles && user && !allowedRoles.includes(user.role)) {
       // Optionally redirect to unauthorized page
-      router.push('/'); // Redirect to home if not authorized
+      router.push("/"); // Redirect to home if not authorized
     }
   }, [isAuthenticated, user, router, allowedRoles]);
 

@@ -1,5 +1,5 @@
 // Import the design system using module wrapper to handle @import deprecation
-@use 'design-system-module';
+@use "design-system-module";
 
 // Maintain backward compatibility for existing styles
 .form {

@@ -75,7 +75,7 @@ const ArticleRating: React.FC<ArticleRatingProps> = ({
               Authorization: `Bearer ${access_token}`, // 使用 token 变量
             },
             body: JSON.stringify({
-              score: rating
+              score: rating,
             }),
           },
         );

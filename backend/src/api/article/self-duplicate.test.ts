@@ -54,7 +54,7 @@ describe('ArticleService - Self-duplicate Prevention', () => {
       };
 
       await expect(
-        service.reviewArticle('10', reviewData, 'reviewer-id')
+        service.reviewArticle('10', reviewData, 'reviewer-id'),
       ).rejects.toThrow('Cannot mark article as duplicate of itself');
     });
   });
@@ -78,7 +78,7 @@ describe('ArticleService - Self-duplicate Prevention', () => {
         .mockImplementation(() => ({
           exec: jest.fn().mockResolvedValue(null), // No existing article with this ID
         }));
-      
+
       (mockArticleModel as any).save = jest.fn().mockResolvedValue({
         ...createArticleDto,
         status: ArticleStatus.PENDING,

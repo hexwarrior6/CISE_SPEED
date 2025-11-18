@@ -113,9 +113,15 @@ export class ArticleController {
     let decodedToken;
 
     try {
-      decodedToken = jwt.verify(token, process.env.JWT_SECRET || 'default_secret') as any;
+      decodedToken = jwt.verify(
+        token,
+        process.env.JWT_SECRET || 'default_secret',
+      ) as any;
     } catch (error) {
-      throw new HttpException('Unauthorized - Invalid token', HttpStatus.UNAUTHORIZED);
+      throw new HttpException(
+        'Unauthorized - Invalid token',
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     // 检查用户角色 - 只有 Searcher 和 Analyst 可以评分
@@ -123,7 +129,7 @@ export class ArticleController {
     if (!allowedRoles.includes(decodedToken.role)) {
       throw new HttpException(
         'Access denied - Only Searcher and Analyst roles can rate articles',
-        HttpStatus.FORBIDDEN
+        HttpStatus.FORBIDDEN,
       );
     }
 

@@ -7,7 +7,10 @@ export default function Home() {
     <div className="container">
       <Head>
         <title>SPEED</title>
-        <meta name="description" content="Software Practice Empirical Evidence Database" />
+        <meta
+          name="description"
+          content="Software Practice Empirical Evidence Database"
+        />
       </Head>
 
       <main>
@@ -17,11 +20,16 @@ export default function Home() {
               Software Practice Empirical Evidence Database (SPEED)
             </h1>
             <p className="subtitle">
-              A comprehensive database of empirical evidence for software engineering practices
+              A comprehensive database of empirical evidence for software
+              engineering practices
             </p>
             <div className="hero-buttons">
-              <Link href="/articles" className="btn btn-primary">Browse Articles</Link>
-              <Link href="/search" className="btn btn-secondary">Search Evidence</Link>
+              <Link href="/articles" className="btn btn-primary">
+                Browse Articles
+              </Link>
+              <Link href="/search" className="btn btn-secondary">
+                Search Evidence
+              </Link>
             </div>
           </div>
         </div>
@@ -30,13 +38,15 @@ export default function Home() {
           <div className="feature-card">
             <h3>Comprehensive Database</h3>
             <p>
-              Access a vast collection of peer-reviewed articles on software engineering practices
+              Access a vast collection of peer-reviewed articles on software
+              engineering practices
             </p>
           </div>
           <div className="feature-card">
             <h3>Evidence-Based</h3>
             <p>
-              All entries are backed by empirical research and real-world case studies
+              All entries are backed by empirical research and real-world case
+              studies
             </p>
           </div>
           <div className="feature-card">
@@ -50,7 +60,11 @@ export default function Home() {
 
       <style jsx>{`
         .hero-section {
-          background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
+          background: linear-gradient(
+            135deg,
+            var(--primary-600) 0%,
+            var(--secondary-600) 100%
+          );
           color: white;
           padding: 4rem 2rem;
           text-align: center;
@@ -128,7 +142,9 @@ export default function Home() {
           padding: 2rem;
           border-radius: var(--border-radius-lg);
           box-shadow: var(--shadow-md);
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          transition:
+            transform 0.3s ease,
+            box-shadow 0.3s ease;
         }
 
         .feature-card:hover {

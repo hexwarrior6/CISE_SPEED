@@ -3,6 +3,6 @@ module.exports = {
     return <img {...props} />;
   },
   getImageProps: jest.fn(() => ({
-    src: '',
+    src: "",
   })),
 };

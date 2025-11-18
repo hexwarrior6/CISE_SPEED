@@ -1,9 +1,9 @@
 // pages/admin/users.tsx
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { User, UserRole } from '../../types/user.types';
-import { addAuthHeader } from '../../utils/auth.utils';
-import styles from '../../styles/AdminUsers.module.scss';
+import { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { User, UserRole } from "../../types/user.types";
+import { addAuthHeader } from "../../utils/auth.utils";
+import styles from "../../styles/AdminUsers.module.scss";
 
 const AdminUsersPage = () => {
   const { user: currentUser } = useAuth();
@@ -12,33 +12,38 @@ const AdminUsersPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!currentUser || currentUser.role !== 'Administrator') {
+    if (!currentUser || currentUser.role !== "Administrator") {
       // Redirect to login or show unauthorized message
-      window.location.href = '/login';
+      window.location.href = "/login";
       return;
     }
 
     const fetchUsers = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users`, {
-          method: 'GET',
-          headers: addAuthHeader(),
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users`,
+          {
+            method: "GET",
+            headers: addAuthHeader(),
+          },
+        );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch users');
+          throw new Error("Failed to fetch users");
         }
 
-        const data: (Partial<User> & { _id?: string })[] = await response.json();
+        const data: (Partial<User> & { _id?: string })[] =
+          await response.json();
         // Ensure each user has an id field based on _id if it doesn't exist
         const usersWithId = data.map((user) => ({
           ...user,
-          id: user._id || user.id || '', // Use _id if id doesn't exist
+          id: user._id || user.id || "", // Use _id if id doesn't exist
         }));
         setUsers(usersWithId as User[]);
         setLoading(false);
       } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch users';
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to fetch users";
         setError(errorMessage);
         setLoading(false);
       }
@@ -49,23 +54,26 @@ const AdminUsersPage = () => {
 
   const updateUserRole = async (userId: string, newRole: UserRole) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${userId}/role`, {
-        method: 'PUT',
-        headers: addAuthHeader({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ role: newRole }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${userId}/role`,
+        {
+          method: "PUT",
+          headers: addAuthHeader({ "Content-Type": "application/json" }),
+          body: JSON.stringify({ role: newRole }),
+        },
+      );
 
       if (response.ok) {
         // Update the local state to reflect the change
-        setUsers(users.map(u =>
-          u.id === userId ? { ...u, role: newRole } : u
-        ));
+        setUsers(
+          users.map((u) => (u.id === userId ? { ...u, role: newRole } : u)),
+        );
       } else {
         const data = await response.json();
-        setError(`Failed to update role: ${data.error || 'Unknown error'}`);
+        setError(`Failed to update role: ${data.error || "Unknown error"}`);
       }
     } catch {
-      setError('Network error. Please try again.');
+      setError("Network error. Please try again.");
     }
   };
 
@@ -80,7 +88,7 @@ const AdminUsersPage = () => {
     );
   }
 
-  if (!currentUser || currentUser.role !== 'Administrator') {
+  if (!currentUser || currentUser.role !== "Administrator") {
     return (
       <div className={styles.container}>
         <div className={styles.alertError}>
@@ -134,15 +142,21 @@ const AdminUsersPage = () => {
           <div className={styles.statLabel}>Total Users</div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statValue}>{users.filter(u => u.role === 'Moderator').length}</div>
+          <div className={styles.statValue}>
+            {users.filter((u) => u.role === "Moderator").length}
+          </div>
           <div className={styles.statLabel}>Moderators</div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statValue}>{users.filter(u => u.role === 'Administrator').length}</div>
+          <div className={styles.statValue}>
+            {users.filter((u) => u.role === "Administrator").length}
+          </div>
           <div className={styles.statLabel}>Administrators</div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statValue}>{users.filter(u => u.role === 'Submitter').length}</div>
+          <div className={styles.statValue}>
+            {users.filter((u) => u.role === "Submitter").length}
+          </div>
           <div className={styles.statLabel}>Submitters</div>
         </div>
       </div>
@@ -162,7 +176,10 @@ const AdminUsersPage = () => {
             <tbody>
               {users.length === 0 ? (
                 <tr>
-                  <td colSpan={4} style={{ textAlign: 'center', padding: '2rem' }}>
+                  <td
+                    colSpan={4}
+                    style={{ textAlign: "center", padding: "2rem" }}
+                  >
                     <div className={styles.emptyState}>
                       <svg
                         className={styles.emptyStateIcon}
@@ -190,20 +207,26 @@ const AdminUsersPage = () => {
                     <td>
                       <select
                         value={user.role}
-                        onChange={(e) => updateUserRole(user.id, e.target.value as UserRole)}
+                        onChange={(e) =>
+                          updateUserRole(user.id, e.target.value as UserRole)
+                        }
                         className={styles.selectInput}
                       >
                         <option value={UserRole.SUBMITTER}>Submitter</option>
                         <option value={UserRole.MODERATOR}>Moderator</option>
                         <option value={UserRole.ANALYST}>Analyst</option>
                         <option value={UserRole.SEARCHER}>Searcher</option>
-                        <option value={UserRole.ADMINISTRATOR}>Administrator</option>
+                        <option value={UserRole.ADMINISTRATOR}>
+                          Administrator
+                        </option>
                       </select>
                     </td>
                     <td>
                       {user.id !== currentUser.id && ( // Don't allow changing own role
                         <button
-                          onClick={() => updateUserRole(user.id, user.role as UserRole)}
+                          onClick={() =>
+                            updateUserRole(user.id, user.role as UserRole)
+                          }
                           className={`${styles.btn} ${styles.btnSuccess}`}
                         >
                           Update

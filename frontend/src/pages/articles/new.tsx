@@ -1,8 +1,8 @@
 // pages/articles/new.tsx (or your current NewDiscussion component's path)
 
 import { FormEvent, useState } from "react";
-import { useRouter } from 'next/router';
-import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from "next/router";
+import { useAuth } from "@/contexts/AuthContext";
 import formStyles from "../../styles/Form.module.scss";
 import { CreateArticleDto } from "@/types/article.types";
 
@@ -20,8 +20,8 @@ const NewDiscussion = () => {
   const { token, isAuthenticated } = useAuth();
 
   // Check if user is authenticated and redirect if not
-  if (typeof window !== 'undefined' && !isAuthenticated) {
-    router.push('/login');
+  if (typeof window !== "undefined" && !isAuthenticated) {
+    router.push("/login");
     return <div>Redirecting to login...</div>;
   }
 
@@ -40,17 +40,20 @@ const NewDiscussion = () => {
     };
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token && { 'Authorization': `Bearer ${token}` }),
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+          body: JSON.stringify(newArticle),
         },
-        body: JSON.stringify(newArticle),
-      });
+      );
 
       if (response.ok) {
-        alert('Article submitted successfully!');
+        alert("Article submitted successfully!");
         // 清空表单
         setCustomId("");
         setTitle("");
@@ -62,11 +65,11 @@ const NewDiscussion = () => {
         setEvidence("");
       } else {
         const errorData = await response.json();
-        alert(`Failed to submit: ${errorData.message || 'Unknown error'}`);
+        alert(`Failed to submit: ${errorData.message || "Unknown error"}`);
       }
     } catch (error) {
-      console.error('Error submitting article:', error);
-      alert('Network error. Please try again.');
+      console.error("Error submitting article:", error);
+      alert("Network error. Please try again.");
     }
   };
 
@@ -75,7 +78,9 @@ const NewDiscussion = () => {
       <h1>New Article</h1>
       <form className={formStyles.form} onSubmit={submitNewArticle}>
         <div className={formStyles.formGroup}>
-          <label htmlFor="customId" className={formStyles.formLabel}>Custom ID:</label>
+          <label htmlFor="customId" className={formStyles.formLabel}>
+            Custom ID:
+          </label>
           <input
             className={formStyles.formControl}
             type="text"
@@ -88,7 +93,9 @@ const NewDiscussion = () => {
         </div>
 
         <div className={formStyles.formGroup}>
-          <label htmlFor="title" className={formStyles.formLabel}>Title:</label>
+          <label htmlFor="title" className={formStyles.formLabel}>
+            Title:
+          </label>
           <input
             className={formStyles.formControl}
             type="text"
@@ -101,7 +108,9 @@ const NewDiscussion = () => {
         </div>
 
         <div className={formStyles.formGroup}>
-          <label htmlFor="authors" className={formStyles.formLabel}>Authors (comma-separated):</label>
+          <label htmlFor="authors" className={formStyles.formLabel}>
+            Authors (comma-separated):
+          </label>
           <input
             className={formStyles.formControl}
             type="text"
@@ -115,7 +124,9 @@ const NewDiscussion = () => {
         </div>
 
         <div className={formStyles.formGroup}>
-          <label htmlFor="source" className={formStyles.formLabel}>Source:</label>
+          <label htmlFor="source" className={formStyles.formLabel}>
+            Source:
+          </label>
           <input
             className={formStyles.formControl}
             type="text"
@@ -128,7 +139,9 @@ const NewDiscussion = () => {
         </div>
 
         <div className={formStyles.formGroup}>
-          <label htmlFor="pubYear" className={formStyles.formLabel}>Publication Year:</label>
+          <label htmlFor="pubYear" className={formStyles.formLabel}>
+            Publication Year:
+          </label>
           <input
             className={formStyles.formControl}
             type="text" // 使用 text 类型，因为后端是 string
@@ -141,7 +154,9 @@ const NewDiscussion = () => {
         </div>
 
         <div className={formStyles.formGroup}>
-          <label htmlFor="doi" className={formStyles.formLabel}>DOI:</label>
+          <label htmlFor="doi" className={formStyles.formLabel}>
+            DOI:
+          </label>
           <input
             className={formStyles.formControl}
             type="text"
@@ -154,7 +169,9 @@ const NewDiscussion = () => {
         </div>
 
         <div className={formStyles.formGroup}>
-          <label htmlFor="claim" className={formStyles.formLabel}>Claim:</label>
+          <label htmlFor="claim" className={formStyles.formLabel}>
+            Claim:
+          </label>
           <input
             className={formStyles.formControl}
             type="text"
@@ -167,7 +184,9 @@ const NewDiscussion = () => {
         </div>
 
         <div className={formStyles.formGroup}>
-          <label htmlFor="evidence" className={formStyles.formLabel}>Evidence:</label>
+          <label htmlFor="evidence" className={formStyles.formLabel}>
+            Evidence:
+          </label>
           <input
             className={formStyles.formControl}
             type="text"

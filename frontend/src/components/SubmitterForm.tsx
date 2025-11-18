@@ -26,7 +26,7 @@ const validationSchema = Yup.object().shape({
     .optional()
     .matches(
       /^[A-Za-z0-9_\-]+$/,
-      "ID can only contain letters, numbers, underscores, and hyphens"
+      "ID can only contain letters, numbers, underscores, and hyphens",
     ),
   title: Yup.string()
     .required("Title is required")
@@ -40,7 +40,7 @@ const validationSchema = Yup.object().shape({
     .required("DOI is required")
     .matches(
       /^10\.\d{4,}(?:\.\d+)*\/[-._;()\/\w]+$/,
-      "Please enter a valid DOI"
+      "Please enter a valid DOI",
     ),
   claim: Yup.string()
     .required("Claim is required")
@@ -75,13 +75,22 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
       // Conditionally include submitterEmail based on user selection
       let finalSubmissionValuesWithNotification;
       if (values.useEmailForNotification && user?.email) {
-        finalSubmissionValuesWithNotification = { ...submissionValues, submitterEmail: user.email };
+        finalSubmissionValuesWithNotification = {
+          ...submissionValues,
+          submitterEmail: user.email,
+        };
       } else {
-        finalSubmissionValuesWithNotification = { ...submissionValues, submitterEmail: '' };
+        finalSubmissionValuesWithNotification = {
+          ...submissionValues,
+          submitterEmail: "",
+        };
       }
 
       // Check if ID already exists - only if customId is provided
-      if (finalSubmissionValuesWithNotification.customId && finalSubmissionValuesWithNotification.customId.trim()) {
+      if (
+        finalSubmissionValuesWithNotification.customId &&
+        finalSubmissionValuesWithNotification.customId.trim()
+      ) {
         const idCheckResponse = await fetch(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/${finalSubmissionValuesWithNotification.customId}`,
           {
@@ -89,12 +98,12 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-          }
+          },
         );
 
         if (idCheckResponse.ok) {
           throw new Error(
-            `Article with ID '${finalSubmissionValuesWithNotification.customId}' already exists. Please choose a different ID.`
+            `Article with ID '${finalSubmissionValuesWithNotification.customId}' already exists. Please choose a different ID.`,
           );
         }
       }
@@ -115,7 +124,7 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify(cleanSubmissionValues),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -131,12 +140,12 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
           if (errorMessage.includes("''")) {
             // The backend encountered an error with an empty string ID
             throw new Error(
-              "There was an issue with article ID generation. Please try submitting again."
+              "There was an issue with article ID generation. Please try submitting again.",
             );
           } else {
             // Use the original logic for non-empty IDs
             throw new Error(
-              `Article with ID '${values.customId}' already exists. Please choose a different ID.`
+              `Article with ID '${values.customId}' already exists. Please choose a different ID.`,
             );
           }
         }
@@ -155,7 +164,7 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
       setError(
         err instanceof Error
           ? err.message
-          : "An error occurred while submitting the article"
+          : "An error occurred while submitting the article",
       );
       console.error("Submission error:", err);
     } finally {
@@ -167,11 +176,7 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
     <div>
       {success && (
         <div className={`alert alert-success mb-md d-flex align-items-center`}>
-          <svg
-            className="alert-icon"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
+          <svg className="alert-icon" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
               d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 12.586 7.707 11.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -184,11 +189,7 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
 
       {error && (
         <div className={`alert alert-error mb-md d-flex align-items-center`}>
-          <svg
-            className="alert-icon"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
+          <svg className="alert-icon" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
               d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 011.414 0L10 7.586l1.293-1.293a1 1 0 111.414 1.414L11.414 10l1.293 1.293a1 1 0 01-1.414 1.414L10 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L8.707 10 7.414 8.707a1 1 0 010-1.414z"
@@ -224,13 +225,15 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
 
                 <div className="form-group">
                   <label htmlFor="title" className="form-label">
-                    Title <span style={{ color: 'var(--error-500)' }}>*</span>
+                    Title <span style={{ color: "var(--error-500)" }}>*</span>
                   </label>
                   <Field
                     id="title"
                     name="title"
                     className={`form-input ${
-                      props.errors.title && props.touched.title ? 'is-invalid' : ''
+                      props.errors.title && props.touched.title
+                        ? "is-invalid"
+                        : ""
                     }`}
                     placeholder="Title of the article"
                   />
@@ -243,13 +246,15 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
 
                 <div className="form-group">
                   <label htmlFor="authors" className="form-label">
-                    Authors <span style={{ color: 'var(--error-500)' }}>*</span>
+                    Authors <span style={{ color: "var(--error-500)" }}>*</span>
                   </label>
                   <Field
                     id="authors"
                     name="authors"
                     className={`form-input ${
-                      props.errors.authors && props.touched.authors ? 'is-invalid' : ''
+                      props.errors.authors && props.touched.authors
+                        ? "is-invalid"
+                        : ""
                     }`}
                     placeholder="Author names (comma separated)"
                   />
@@ -262,13 +267,15 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
 
                 <div className="form-group">
                   <label htmlFor="source" className="form-label">
-                    Source <span style={{ color: 'var(--error-500)' }}>*</span>
+                    Source <span style={{ color: "var(--error-500)" }}>*</span>
                   </label>
                   <Field
                     id="source"
                     name="source"
                     className={`form-input ${
-                      props.errors.source && props.touched.source ? 'is-invalid' : ''
+                      props.errors.source && props.touched.source
+                        ? "is-invalid"
+                        : ""
                     }`}
                     placeholder="Journal/Conference name"
                   />
@@ -281,13 +288,16 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
 
                 <div className="form-group">
                   <label htmlFor="pubyear" className="form-label">
-                    Publication Year <span style={{ color: 'var(--error-500)' }}>*</span>
+                    Publication Year{" "}
+                    <span style={{ color: "var(--error-500)" }}>*</span>
                   </label>
                   <Field
                     id="pubyear"
                     name="pubyear"
                     className={`form-input ${
-                      props.errors.pubyear && props.touched.pubyear ? 'is-invalid' : ''
+                      props.errors.pubyear && props.touched.pubyear
+                        ? "is-invalid"
+                        : ""
                     }`}
                     placeholder="YYYY"
                   />
@@ -302,13 +312,13 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
               <div className="flex-1">
                 <div className="form-group">
                   <label htmlFor="doi" className="form-label">
-                    DOI <span style={{ color: 'var(--error-500)' }}>*</span>
+                    DOI <span style={{ color: "var(--error-500)" }}>*</span>
                   </label>
                   <Field
                     id="doi"
                     name="doi"
                     className={`form-input ${
-                      props.errors.doi && props.touched.doi ? 'is-invalid' : ''
+                      props.errors.doi && props.touched.doi ? "is-invalid" : ""
                     }`}
                     placeholder="10.xxxx/xxxxx"
                   />
@@ -324,14 +334,17 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
 
                 <div className="form-group">
                   <label htmlFor="evidence" className="form-label">
-                    Evidence Type <span style={{ color: 'var(--error-500)' }}>*</span>
+                    Evidence Type{" "}
+                    <span style={{ color: "var(--error-500)" }}>*</span>
                   </label>
                   <Field
                     as="select"
                     id="evidence"
                     name="evidence"
                     className={`form-select ${
-                      props.errors.evidence && props.touched.evidence ? 'is-invalid' : ''
+                      props.errors.evidence && props.touched.evidence
+                        ? "is-invalid"
+                        : ""
                     }`}
                   >
                     <option value="">Select evidence type</option>
@@ -361,10 +374,10 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
                     <label
                       htmlFor="useEmailForNotification"
                       className="form-label mb-0"
-                      style={{ fontSize: 'var(--font-size-sm)' }}
+                      style={{ fontSize: "var(--font-size-sm)" }}
                     >
                       Send notification to my registered email (
-                      {user?.email || 'No email found'} )
+                      {user?.email || "No email found"} )
                     </label>
                   </div>
                 </div>
@@ -373,7 +386,7 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
 
             <div className="form-group mt-sm">
               <label htmlFor="claim" className="form-label">
-                Claim <span style={{ color: 'var(--error-500)' }}>*</span>
+                Claim <span style={{ color: "var(--error-500)" }}>*</span>
               </label>
               <Field
                 as="textarea"
@@ -381,10 +394,14 @@ const SubmitterForm: React.FC<SubmitArticleProps> = ({ onSubmitSuccess }) => {
                 name="claim"
                 rows={4}
                 className={`form-textarea ${
-                  props.errors.claim && props.touched.claim ? 'is-invalid' : ''
+                  props.errors.claim && props.touched.claim ? "is-invalid" : ""
                 }`}
                 placeholder="Describe the SE practice claim made in this article"
-                style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
+                style={{
+                  width: "100%",
+                  maxWidth: "100%",
+                  boxSizing: "border-box",
+                }}
               />
               <ErrorMessage
                 name="claim"
