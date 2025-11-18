@@ -10,6 +10,8 @@ export interface Article {
   doi: string;
   claim: string;
   evidence: string;
+  averageRating?: number;
+  userRating?: number;
 }
 
 // 用于创建新文章的 DTO（与后端 CreateArticleDto 对应）

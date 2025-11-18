@@ -1,6 +1,12 @@
 // contexts/AuthContext.tsx
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, LoginResponse } from '../types/user.types';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { User, LoginResponse } from "../types/user.types";
 
 interface AuthContextType {
   user: User | null;
@@ -13,21 +19,23 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     // Check if user is logged in on initial load
-    const storedUser = localStorage.getItem('user');
-    const storedToken = localStorage.getItem('access_token');
+    const storedUser = localStorage.getItem("user");
+    const storedToken = localStorage.getItem("access_token");
 
     if (storedUser && storedToken) {
       setUser(JSON.parse(storedUser));
       setToken(storedToken);
     }
-    
+
     // Set loading to false after checking for stored auth data
     setLoading(false);
   }, []);
@@ -36,10 +44,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setLoading(true);
     setUser(loginData.user);
     setToken(loginData.access_token);
-    
+
     // Store in localStorage
-    localStorage.setItem('user', JSON.stringify(loginData.user));
-    localStorage.setItem('access_token', loginData.access_token);
+    localStorage.setItem("user", JSON.stringify(loginData.user));
+    localStorage.setItem("access_token", loginData.access_token);
     setLoading(false);
   };
 
@@ -47,17 +55,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setLoading(true);
     setUser(null);
     setToken(null);
-    
+
     // Remove from localStorage
-    localStorage.removeItem('user');
-    localStorage.removeItem('access_token');
+    localStorage.removeItem("user");
+    localStorage.removeItem("access_token");
     setLoading(false);
   };
 
   const isAuthenticated = !!(user && token);
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated, loading }}>
+    <AuthContext.Provider
+      value={{ user, token, login, logout, isAuthenticated, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -66,7 +76,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

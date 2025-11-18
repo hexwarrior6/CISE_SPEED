@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpException,
   HttpStatus,
@@ -15,6 +16,7 @@ import {
 import { ArticleService } from './article.service';
 import { CreateArticleDto, ReviewArticleDto } from './create-article.dto';
 import { ArticleStatus } from './article.schema';
+import * as jwt from 'jsonwebtoken';
 
 @Controller('api/articles')
 export class ArticleController {
@@ -25,12 +27,9 @@ export class ArticleController {
     return 'Article API is working';
   }
 
-  // Get all articles with optional status filter
   @Get('/')
   async findAll(@Query('status') status?: ArticleStatus) {
     try {
-      // If no status is specified, return only approved articles
-      // Otherwise, return articles with the specified status
       return await this.articleService.findAll(status);
     } catch (error) {
       throw new HttpException(
@@ -44,7 +43,6 @@ export class ArticleController {
     }
   }
 
-  // Get single article by ID
   @Get('/:id')
   async findOne(@Param('id') id: string) {
     try {
@@ -65,14 +63,12 @@ export class ArticleController {
     }
   }
 
-  // Submit new article (Submitter feature)
   @Post('/submit')
   async submitArticle(
     @Body() createArticleDto: CreateArticleDto,
     @Request() req,
   ) {
     try {
-      // Add submitter information from authenticated user
       if (req.user) {
         createArticleDto.submitterId = req.user._id;
         createArticleDto.submitterEmail = req.user.email;
@@ -86,13 +82,10 @@ export class ArticleController {
         notification: 'Email notification will be sent when review is complete',
       };
     } catch (error) {
-      // Handle specific error types and pass appropriate messages to frontend
       if (error instanceof HttpException) {
-        // Re-throw the HttpException as is to preserve status code and message
         throw error;
       }
 
-      // For other errors, wrap in HttpException with proper details
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
@@ -105,7 +98,45 @@ export class ArticleController {
     }
   }
 
-  // Update article
+  @Post(':id/rating')
+  async addRating(
+    @Param('id') id: string,
+    @Body() body: { score: number },
+    @Request() req,
+  ) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+
+    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+    let decodedToken;
+
+    try {
+      decodedToken = jwt.verify(
+        token,
+        process.env.JWT_SECRET || 'default_secret',
+      ) as any;
+    } catch (error) {
+      throw new HttpException(
+        'Unauthorized - Invalid token',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    // 检查用户角色 - 只有 Searcher 和 Analyst 可以评分
+    const allowedRoles = ['Searcher', 'Analyst'];
+    if (!allowedRoles.includes(decodedToken.role)) {
+      throw new HttpException(
+        'Access denied - Only Searcher and Analyst roles can rate articles',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    // 使用认证用户的ID和评分进行评分
+    return this.articleService.addRating(id, decodedToken.sub, body.score);
+  }
+
   @Put('/:id')
   async updateArticle(
     @Param('id') id: string,
@@ -126,7 +157,6 @@ export class ArticleController {
     }
   }
 
-  // Review article (Moderator feature)
   @Post('/:id/review')
   async reviewArticle(
     @Param('id') id: string,
@@ -134,7 +164,6 @@ export class ArticleController {
     @Request() req,
   ) {
     try {
-      // Get reviewer ID from authenticated user
       const reviewerId = req.user?._id || 'system';
 
       const updatedArticle = await this.articleService.reviewArticle(
@@ -159,7 +188,6 @@ export class ArticleController {
     }
   }
 
-  // Search articles (Searcher feature)
   @Get('/search/advanced')
   async searchArticles(
     @Query('keywords') keywords: string,
@@ -196,7 +224,6 @@ export class ArticleController {
     }
   }
 
-  // Get pending articles (for Moderator queue)
   @Get('/moderator/pending')
   async getPendingArticles() {
     try {
@@ -213,11 +240,12 @@ export class ArticleController {
     }
   }
 
-  // Check for duplicates by DOI (for Moderator feature)
   @Post('/check-duplicate')
-  async checkDuplicates(@Body('doi') doi: string, @Body('excludeId') excludeId?: string) {
+  async checkDuplicates(
+    @Body('doi') doi: string,
+    @Body('excludeId') excludeId?: string,
+  ) {
     try {
-      // Find similar articles by DOI, excluding the current article if ID is provided
       const similarArticles =
         await this.articleService.findArticlesBySimilarDOI(doi, excludeId);
       return similarArticles;
@@ -233,7 +261,6 @@ export class ArticleController {
     }
   }
 
-  // Delete article
   @Delete('/:id')
   async deleteArticle(@Param('id') id: string) {
     try {

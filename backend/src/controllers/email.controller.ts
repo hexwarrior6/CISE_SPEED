@@ -1,6 +1,20 @@
-import { Controller, Post, Get, Body, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Query,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { EmailService } from '../services/email.service';
-import { IsEmail, IsString, IsArray, ValidateNested, IsOptional } from 'class-validator';
+import {
+  IsEmail,
+  IsString,
+  IsArray,
+  ValidateNested,
+  IsOptional,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 class SendEmailDto {
@@ -50,7 +64,13 @@ export class EmailController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async sendEmail(@Body() sendEmailDto: SendEmailDto) {
     const { to, subject, html, text, fromName } = sendEmailDto;
-    const result = await this.emailService.sendMail(to, subject, html, text, fromName);
+    const result = await this.emailService.sendMail(
+      to,
+      subject,
+      html,
+      text,
+      fromName,
+    );
 
     if (result) {
       return {
@@ -69,7 +89,13 @@ export class EmailController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async sendBulkEmail(@Body() sendBulkEmailDto: SendBulkEmailDto) {
     const { to, subject, html, text, fromName } = sendBulkEmailDto;
-    const result = await this.emailService.sendBulkMail(to, subject, html, text, fromName);
+    const result = await this.emailService.sendBulkMail(
+      to,
+      subject,
+      html,
+      text,
+      fromName,
+    );
 
     if (result) {
       return {
@@ -85,7 +111,10 @@ export class EmailController {
   }
 
   @Get('test')
-  async testEmail(@Query('to') to: string, @Query('fromName') fromName?: string) {
+  async testEmail(
+    @Query('to') to: string,
+    @Query('fromName') fromName?: string,
+  ) {
     const result = await this.emailService.sendMail(
       to,
       'Test Email',

@@ -27,7 +27,7 @@ export default function SubmissionForm() {
   const { token } = useAuth();
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -49,17 +49,20 @@ export default function SubmissionForm() {
     };
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token && { 'Authorization': `Bearer ${token}` }),
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+          body: JSON.stringify(articleData),
         },
-        body: JSON.stringify(articleData),
-      });
+      );
 
       if (response.ok) {
-        alert('Article submitted successfully!');
+        alert("Article submitted successfully!");
         // Reset form
         setFormData({
           title: "",
@@ -72,11 +75,11 @@ export default function SubmissionForm() {
         });
       } else {
         const errorData = await response.json();
-        alert(`Submission failed: ${errorData.message || 'Unknown error'}`);
+        alert(`Submission failed: ${errorData.message || "Unknown error"}`);
       }
     } catch (error) {
-      console.error('Submission error:', error);
-      alert('Network error. Please try again.');
+      console.error("Submission error:", error);
+      alert("Network error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -189,12 +192,12 @@ export default function SubmissionForm() {
           ></textarea>
         </div>
 
-        <button 
-          className={`${formStyles.btnPrimary} ${formStyles.formGroup}`} 
+        <button
+          className={`${formStyles.btnPrimary} ${formStyles.formGroup}`}
           type="submit"
           disabled={loading}
         >
-          {loading ? 'Submitting...' : 'Submit Article'}
+          {loading ? "Submitting..." : "Submit Article"}
         </button>
       </form>
     </div>

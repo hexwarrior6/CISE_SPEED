@@ -22,12 +22,17 @@ $gray-800: #1f2937;
 $gray-900: #111827;
 
 $shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-$shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+$shadow:
+  0 1px 3px 0 rgba(0, 0, 0, 0.1),
+  0 1px 2px 0 rgba(0, 0, 0, 0.06);
+$shadow-md:
+  0 4px 6px -1px rgba(0, 0, 0, 0.1),
   0 2px 4px -1px rgba(0, 0, 0, 0.06);
-$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+$shadow-lg:
+  0 10px 15px -3px rgba(0, 0, 0, 0.1),
   0 4px 6px -2px rgba(0, 0, 0, 0.06);
-$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+$shadow-xl:
+  0 20px 25px -5px rgba(0, 0, 0, 0.1),
   0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
 $transition: all 0.2s ease;
@@ -376,4 +381,430 @@ $border-radius-sm: 8px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+// frontend/src/styles/ArticlesPage.module.scss
+// 在文件末尾添加以下样式
+
+.ratingContainer {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f8f9fa;
+  }
+}
+
+.ratingDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
+
+.starRating {
+  display: flex;
+  margin-bottom: 0.25rem;
+}
+
+.star {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+  margin: 0 1px;
+  transition: color 0.2s;
+
+  &.filled {
+    color: #ffc107;
+  }
+
+  &.empty {
+    color: #e0e0e0;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.ratingValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #495057;
+}
+// frontend/src/styles/ArticlesPage.module.scss
+// 在文件末尾添加以下样式
+
+.ratingContainer {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.singleStarRating {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.singleStar {
+  color: #ffc107; /* 橙红色 */
+  font-size: 1rem;
+}
+
+.singleRatingValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffc107; /* 橙红色 */
+}
+
+// frontend/src/styles/ArticlesPage.module.scss
+
+.star {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+  margin: 0 1px;
+  transition: color 0.2s;
+
+  &.filled {
+    color: #ffc107; /* 橙红色 */
+  }
+
+  &.halfFilled {
+    color: #ffc107; /* 橙红色 */
+    position: relative;
+
+    &::before {
+      content: "★";
+      color: #e0e0e0; /* 灰色 */
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 50%;
+      overflow: hidden;
+    }
+  }
+
+  &.empty {
+    color: #e0e0e0; /* 灰色 */
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+// frontend/src/styles/ArticlesPage.module.scss
+
+.star {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+  margin: 0 1px;
+  transition: color 0.2s;
+
+  &.filled {
+    color: #ffc107; /* 橙红色 */
+  }
+
+  &.halfFilled {
+    color: #ffc107; /* 橙红色 */
+    position: relative;
+
+    &::before {
+      content: "★";
+      color: #e0e0e0; /* 灰色 */
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 50%;
+      overflow: hidden;
+    }
+  }
+
+  &.empty {
+    color: #e0e0e0; /* 灰色 */
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.ratingContainer {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ratingDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
+
+.starRating {
+  display: flex;
+  margin-bottom: 0.25rem;
+}
+
+.ratingValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+// frontend/src/styles/ArticlesPage.module.scss 中添加以下样式
+.ratingSection {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+
+  h3 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+}
+
+.star {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  margin: 0 1px;
+  transition: color 0.2s;
+  position: relative;
+
+  &.filled {
+    color: #ffc107; /* 橙红色 */
+  }
+
+  &.halfFilled {
+    color: #e0e0e0; /* 灰色 */
+    position: relative;
+
+    &::before {
+      content: "★";
+      color: #ffc107; /* 橙红色 */
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 50%;
+      overflow: hidden;
+    }
+  }
+
+  &.empty {
+    color: #e0e0e0; /* 灰色 */
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.ratingContainer {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: #f8f9fa;
+  }
+}
+
+.ratingDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
+.starRating {
+  display: flex;
+  margin-bottom: 0.25rem;
+}
+
+.ratingValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+// 在 frontend/src/styles/ArticlesPage.module.scss 中添加以下样式
+
+.articleDetailContainer {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.articleHeader {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.articleTitle {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+  min-width: 300px;
+}
+
+.articleRating {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.articleInfoCard {
+  padding: 2rem;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.infoRow {
+  display: flex;
+  flex-direction: column;
+}
+
+.infoLabel {
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.infoValue {
+  font-size: 1.1rem;
+  color: #2d3748;
+  word-break: break-word;
+}
+
+.doiLink {
+  color: #4299e1;
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+    color: #3182ce;
+  }
+}
+
+.actionButtons {
+  padding: 0 2rem 2rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.backButton {
+  background: #4299e1;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #3182ce;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .articleHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .articleTitle {
+    font-size: 1.5rem;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .articleInfoCard {
+    padding: 1.5rem;
+  }
+
+  .actionButtons {
+    padding: 0 1.5rem 1.5rem;
+  }
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #4299e1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorContainer {
+  background: #fed7d7;
+  color: #c53030;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  margin: 1rem 0;
 }

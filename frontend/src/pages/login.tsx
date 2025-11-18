@@ -29,7 +29,7 @@ const LoginPage = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(loginData),
-        }
+        },
       );
 
       if (response.ok) {
@@ -55,8 +55,14 @@ const LoginPage = () => {
 
   return (
     <div className="container">
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh', padding: '2rem 0' }}>
-        <div className={formStyles.form} style={{ width: '100%', maxWidth: '400px' }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "80vh", padding: "2rem 0" }}
+      >
+        <div
+          className={formStyles.form}
+          style={{ width: "100%", maxWidth: "400px" }}
+        >
           <h1 className="text-center mb-lg">Login</h1>
           <form onSubmit={handleLogin}>
             <div className={formStyles.formGroup}>
@@ -89,17 +95,18 @@ const LoginPage = () => {
               />
             </div>
 
-            <button 
-              className={`${formStyles.btnPrimary} ${formStyles.formGroup}`} 
+            <button
+              className={`${formStyles.btnPrimary} ${formStyles.formGroup}`}
               type="submit"
               disabled={loading}
             >
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
 
           <p className="text-center text-muted">
-            Don&#39;t have an account? <Link href="/register">Register here</Link>
+            Don&#39;t have an account?{" "}
+            <Link href="/register">Register here</Link>
           </p>
         </div>
       </div>

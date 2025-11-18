@@ -1,11 +1,11 @@
 // types/user.types.ts
 
 export enum UserRole {
-  SUBMITTER = 'Submitter',
-  MODERATOR = 'Moderator',
-  ANALYST = 'Analyst',
-  SEARCHER = 'Searcher',
-  ADMINISTRATOR = 'Administrator',
+  SUBMITTER = "Submitter",
+  MODERATOR = "Moderator",
+  ANALYST = "Analyst",
+  SEARCHER = "Searcher",
+  ADMINISTRATOR = "Administrator",
 }
 
 export interface User {

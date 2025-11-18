@@ -29,6 +29,7 @@ The backend is built with NestJS and includes:
 - Environment-based configuration
 
 ### Backend Technologies:
+
 - NestJS 11.x
 - TypeScript 5.x
 - MongoDB/Mongoose
@@ -36,6 +37,7 @@ The backend is built with NestJS and includes:
 - JWT for authentication
 
 ### Backend Scripts:
+
 ```bash
 # Install dependencies
 npm install
@@ -68,6 +70,7 @@ The frontend is built with Next.js and provides:
 - Responsive design with Sass styling
 
 ### Frontend Technologies:
+
 - Next.js 15.x
 - React 19.x
 - TypeScript 5.x
@@ -77,6 +80,7 @@ The frontend is built with Next.js and provides:
 - React Hook Form for form management
 
 ### Frontend Scripts:
+
 ```bash
 # Install dependencies
 npm install
@@ -136,6 +140,7 @@ CISE_SPEED/
 ## Environment Configuration
 
 The application requires environment variables for:
+
 - Database connection (DB_URI)
 - Port configurations
 - Authentication secrets (JWT)
@@ -143,11 +148,13 @@ The application requires environment variables for:
 ## Building and Running
 
 ### Development:
+
 1. Start the backend: `cd backend && npm run start:dev`
 2. In a separate terminal, start the frontend: `cd frontend && npm run dev`
 3. Access the application at http://localhost:3000
 
 ### Production:
+
 1. Build the backend: `cd backend && npm run build`
 2. Build the frontend: `cd frontend && npm run build`
 3. Start the backend: `cd backend && npm run start:prod`
@@ -177,6 +184,7 @@ The frontend uses a comprehensive design system defined in `frontend/src/styles/
   - Utility classes (text-center, d-flex, justify-content-center, etc.)
 
 When creating new components:
+
 - Always use CSS custom properties from the design system (e.g., `var(--primary-600)`, `var(--spacing-md)`)
 - Apply predefined class names from the design system when possible
 - Extend existing classes using Sass `@extend` directive when creating similar components

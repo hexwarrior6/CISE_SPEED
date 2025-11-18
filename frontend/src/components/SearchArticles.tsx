@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Article, EvidenceType, ArticleStatus } from "../types/article";
 import { exportToCSV } from "../utils/csv.utils";
 import styles from "../styles/SearchPage.module.scss";
+import ArticleRating from "./ArticleRating";
 
 // Enhanced search functionality with real-time suggestions and search history
 
@@ -22,13 +23,17 @@ const SearchArticles: React.FC = () => {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [showHistoryDropdown, setShowHistoryDropdown] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const [dropdownPosition, setDropdownPosition] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+  });
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Load search history from localStorage on component mount
   useEffect(() => {
-    const savedHistory = localStorage.getItem('searchHistory');
+    const savedHistory = localStorage.getItem("searchHistory");
     if (savedHistory) {
       try {
         const history = JSON.parse(savedHistory);
@@ -36,14 +41,14 @@ const SearchArticles: React.FC = () => {
           setSearchHistory(history);
         }
       } catch (e) {
-        console.error('Error parsing search history from localStorage:', e);
+        console.error("Error parsing search history from localStorage:", e);
       }
     }
   }, []);
 
   // Save search history to localStorage whenever searchHistory changes
   useEffect(() => {
-    localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
   }, [searchHistory]);
 
   // Update dropdown position when it's shown or when the window is resized
@@ -84,12 +89,12 @@ const SearchArticles: React.FC = () => {
       }
     };
 
-    window.addEventListener('scroll', handleScrollAndResize);
-    window.addEventListener('resize', handleScrollAndResize);
+    window.addEventListener("scroll", handleScrollAndResize);
+    window.addEventListener("resize", handleScrollAndResize);
 
     return () => {
-      window.removeEventListener('scroll', handleScrollAndResize);
-      window.removeEventListener('resize', handleScrollAndResize);
+      window.removeEventListener("scroll", handleScrollAndResize);
+      window.removeEventListener("resize", handleScrollAndResize);
     };
   }, [showHistoryDropdown]);
 
@@ -104,7 +109,6 @@ const SearchArticles: React.FC = () => {
     }
   }, [keywords, evidenceType, pubYearFrom, pubYearTo, authors, status, source]);
 
-
   const handleSearch = async () => {
     setLoading(true);
     setError(null);
@@ -112,8 +116,10 @@ const SearchArticles: React.FC = () => {
 
     // Add to search history if the search term is not already in the history
     if (keywords.trim()) {
-      setSearchHistory(prev => {
-        const newHistory = prev.filter(item => item.toLowerCase() !== keywords.trim().toLowerCase());
+      setSearchHistory((prev) => {
+        const newHistory = prev.filter(
+          (item) => item.toLowerCase() !== keywords.trim().toLowerCase(),
+        );
         // Limit history to 5 items to match the UI
         return [keywords.trim(), ...newHistory].slice(0, 5);
       });
@@ -136,7 +142,7 @@ const SearchArticles: React.FC = () => {
       const response = await fetch(
         `${
           process.env.NEXT_PUBLIC_BACKEND_URL
-        }/api/articles/search/advanced?${params.toString()}`
+        }/api/articles/search/advanced?${params.toString()}`,
       );
 
       if (!response.ok) {
@@ -147,7 +153,7 @@ const SearchArticles: React.FC = () => {
       setResults(data);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "An error occurred during search"
+        err instanceof Error ? err.message : "An error occurred during search",
       );
       setResults([]);
     } finally {
@@ -172,7 +178,7 @@ const SearchArticles: React.FC = () => {
 
   const handleClearHistory = () => {
     setSearchHistory([]);
-    localStorage.removeItem('searchHistory');
+    localStorage.removeItem("searchHistory");
   };
 
   // Handle table sorting
@@ -203,15 +209,19 @@ const SearchArticles: React.FC = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
-      if (searchInputRef.current && !searchInputRef.current.contains(target) &&
-          dropdownRef.current && !dropdownRef.current.contains(target)) {
+      if (
+        searchInputRef.current &&
+        !searchInputRef.current.contains(target) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(target)
+      ) {
         setShowHistoryDropdown(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -224,81 +234,97 @@ const SearchArticles: React.FC = () => {
           {/* Main Search Bar */}
           <div className={styles.mainSearchSection}>
             <div className={styles.searchBarContainer}>
-                <input
-                  id="keywords"
-                  type="text"
-                  value={keywords}
-                  onChange={(e) => setKeywords(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  onFocus={() => setShowHistoryDropdown(true)}
-                  onClick={() => setShowHistoryDropdown(true)}
-                  className={styles.mainSearchInput}
-                  placeholder="Enter keywords to search across titles, authors, and claims..."
-                  aria-label="Search keywords"
-                  autoComplete="off"
-                  ref={searchInputRef}
-                />
-                {/* This is where the dropdown would be rendered in the normal DOM */}
-                {/* The actual dropdown will be rendered in a portal-like fashion */}
-                {showHistoryDropdown && (
+              <input
+                id="keywords"
+                type="text"
+                value={keywords}
+                onChange={(e) => setKeywords(e.target.value)}
+                onKeyPress={handleKeyPress}
+                onFocus={() => setShowHistoryDropdown(true)}
+                onClick={() => setShowHistoryDropdown(true)}
+                className={styles.mainSearchInput}
+                placeholder="Enter keywords to search across titles, authors, and claims..."
+                aria-label="Search keywords"
+                autoComplete="off"
+                ref={searchInputRef}
+              />
+              {/* This is where the dropdown would be rendered in the normal DOM */}
+              {/* The actual dropdown will be rendered in a portal-like fashion */}
+              {showHistoryDropdown && (
+                <div
+                  id="search-history-dropdown-portal"
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    pointerEvents: "none",
+                  }}
+                >
                   <div
-                    id="search-history-dropdown-portal"
-                    style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
+                    className={styles.searchHistoryDropdown}
+                    ref={dropdownRef}
+                    style={{
+                      top: `${dropdownPosition.top + 4}px`, // Add 4px gap
+                      left: `${dropdownPosition.left}px`,
+                      width: `${dropdownPosition.width}px`,
+                      position: "absolute",
+                      pointerEvents: "auto",
+                    }}
                   >
-                    <div
-                      className={styles.searchHistoryDropdown}
-                      ref={dropdownRef}
-                      style={{
-                        top: `${dropdownPosition.top + 4}px`,  // Add 4px gap
-                        left: `${dropdownPosition.left}px`,
-                        width: `${dropdownPosition.width}px`,
-                        position: 'absolute',
-                        pointerEvents: 'auto',
-                      }}
-                    >
-                      {searchHistory.length > 0 ? (
-                        <>
-                          <div className={styles.historyHeader}>
-                            <span>Recent Searches</span>
-                            <button
-                              className={styles.clearHistoryButton}
-                              onClick={handleClearHistory}
-                              aria-label="Clear search history"
-                            >
-                              Clear
-                            </button>
-                          </div>
-                          <ul className={styles.historyList}>
-                            {searchHistory.slice(0, 5).map((item, index) => (  // Only show first 5 items
+                    {searchHistory.length > 0 ? (
+                      <>
+                        <div className={styles.historyHeader}>
+                          <span>Recent Searches</span>
+                          <button
+                            className={styles.clearHistoryButton}
+                            onClick={handleClearHistory}
+                            aria-label="Clear search history"
+                          >
+                            Clear
+                          </button>
+                        </div>
+                        <ul className={styles.historyList}>
+                          {searchHistory.slice(0, 5).map(
+                            (
+                              item,
+                              index, // Only show first 5 items
+                            ) => (
                               <li
                                 key={index}
                                 className={styles.historyItem}
                                 onClick={() => handleHistoryItemClick(item)}
                               >
-                                <span className={styles.historyText}>{item}</span>
+                                <span className={styles.historyText}>
+                                  {item}
+                                </span>
                                 <button
                                   className={styles.removeHistoryButton}
                                   onClick={(e) => {
                                     e.stopPropagation(); // Prevent triggering the parent onClick
                                     // Filter by the actual item value, not by index, to handle removal correctly
-                                    setSearchHistory(prev => prev.filter(historyItem => historyItem !== item));
+                                    setSearchHistory((prev) =>
+                                      prev.filter(
+                                        (historyItem) => historyItem !== item,
+                                      ),
+                                    );
                                   }}
                                   aria-label={`Remove ${item} from history`}
                                 >
                                   ×
                                 </button>
                               </li>
-                            ))}
-                          </ul>
-                        </>
-                      ) : (
-                        <div className={styles.noHistoryMessage}>
-                          <p>No recent searches</p>
-                        </div>
-                      )}
-                    </div>
+                            ),
+                          )}
+                        </ul>
+                      </>
+                    ) : (
+                      <div className={styles.noHistoryMessage}>
+                        <p>No recent searches</p>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
+              )}
               <button
                 onClick={handleSearch}
                 disabled={loading}
@@ -319,10 +345,10 @@ const SearchArticles: React.FC = () => {
                   className={styles.searchHistoryDropdown}
                   ref={dropdownRef}
                   style={{
-                    top: `${dropdownPosition.top + 4}px`,  // Add 4px gap
+                    top: `${dropdownPosition.top + 4}px`, // Add 4px gap
                     left: `${dropdownPosition.left}px`,
                     width: `${dropdownPosition.width}px`,
-                    position: 'absolute',
+                    position: "absolute",
                   }}
                 >
                   {searchHistory.length > 0 ? (
@@ -338,26 +364,35 @@ const SearchArticles: React.FC = () => {
                         </button>
                       </div>
                       <ul className={styles.historyList}>
-                        {searchHistory.slice(0, 5).map((item, index) => (  // Only show first 5 items
-                          <li
-                            key={index}
-                            className={styles.historyItem}
-                            onClick={() => handleHistoryItemClick(item)}
-                          >
-                            <span className={styles.historyText}>{item}</span>
-                            <button
-                              className={styles.removeHistoryButton}
-                              onClick={(e) => {
-                                e.stopPropagation(); // Prevent triggering the parent onClick
-                                // Filter by the actual item value, not by index, to handle removal correctly
-                                setSearchHistory(prev => prev.filter(historyItem => historyItem !== item));
-                              }}
-                              aria-label={`Remove ${item} from history`}
+                        {searchHistory.slice(0, 5).map(
+                          (
+                            item,
+                            index, // Only show first 5 items
+                          ) => (
+                            <li
+                              key={index}
+                              className={styles.historyItem}
+                              onClick={() => handleHistoryItemClick(item)}
                             >
-                              ×
-                            </button>
-                          </li>
-                        ))}
+                              <span className={styles.historyText}>{item}</span>
+                              <button
+                                className={styles.removeHistoryButton}
+                                onClick={(e) => {
+                                  e.stopPropagation(); // Prevent triggering the parent onClick
+                                  // Filter by the actual item value, not by index, to handle removal correctly
+                                  setSearchHistory((prev) =>
+                                    prev.filter(
+                                      (historyItem) => historyItem !== item,
+                                    ),
+                                  );
+                                }}
+                                aria-label={`Remove ${item} from history`}
+                              >
+                                ×
+                              </button>
+                            </li>
+                          ),
+                        )}
                       </ul>
                     </>
                   ) : (
@@ -390,7 +425,10 @@ const SearchArticles: React.FC = () => {
               <div className={styles.advancedFiltersContent}>
                 <div className={styles.filtersRow}>
                   <div className={styles.filterGroup}>
-                    <label htmlFor="evidenceType" className={styles.filterLabel}>
+                    <label
+                      htmlFor="evidenceType"
+                      className={styles.filterLabel}
+                    >
                       SE Practice
                     </label>
                     <select
@@ -416,7 +454,9 @@ const SearchArticles: React.FC = () => {
                     <select
                       id="status"
                       value={status}
-                      onChange={(e) => setStatus(e.target.value as ArticleStatus)}
+                      onChange={(e) =>
+                        setStatus(e.target.value as ArticleStatus)
+                      }
                       className={styles.formSelect}
                       aria-label="Select article status"
                     >
@@ -569,7 +609,12 @@ const SearchArticles: React.FC = () => {
                   {sortDirection === "asc" ? "↑" : "↓"}
                 </div>
                 <button
-                  onClick={() => exportToCSV(results, `search-results-${new Date().toISOString().slice(0, 10)}.csv`)}
+                  onClick={() =>
+                    exportToCSV(
+                      results,
+                      `search-results-${new Date().toISOString().slice(0, 10)}.csv`,
+                    )
+                  }
                   className={styles.exportButton}
                   title="Export results to CSV"
                 >
@@ -595,6 +640,16 @@ const SearchArticles: React.FC = () => {
               <table className={styles.resultTable}>
                 <thead>
                   <tr>
+                    <th scope="col" onClick={() => handleSort("averageRating")}>
+                      <div className={styles.tableHeader}>
+                        Rating
+                        {sortField === "averageRating" && (
+                          <span className={styles.sortIndicator}>
+                            {sortDirection === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </div>
+                    </th>
                     <th scope="col" onClick={() => handleSort("title")}>
                       <div className={styles.tableHeader}>
                         Title
@@ -656,6 +711,13 @@ const SearchArticles: React.FC = () => {
                 <tbody>
                   {results.map((article) => (
                     <tr key={article.customId} className={styles.tableRow}>
+                      <td className={styles.ratingCell}>
+                        <ArticleRating
+                          customId={article.customId}
+                          averageRating={article.averageRating}
+                          readonly={true}
+                        />
+                      </td>
                       <td className={styles.titleCell}>
                         <div className={styles.titleText}>{article.title}</div>
                         <div className={styles.idText}>
@@ -670,7 +732,9 @@ const SearchArticles: React.FC = () => {
                       </td>
                       <td className={styles.claimCell}>{article.claim}</td>
                       <td className={styles.dateCell}>
-                        {article.createdAt ? new Date(article.createdAt).toLocaleDateString() : 'N/A'}
+                        {article.createdAt
+                          ? new Date(article.createdAt).toLocaleDateString()
+                          : "N/A"}
                       </td>
                     </tr>
                   ))}

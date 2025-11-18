@@ -90,7 +90,7 @@ describe('ArticleService', () => {
             expect.objectContaining({ title: expect.any(RegExp) }),
             expect.objectContaining({ authors: expect.any(RegExp) }),
           ]),
-        })
+        }),
       );
       expect(result).toEqual(mockArticles);
     });
@@ -117,14 +117,14 @@ describe('ArticleService', () => {
 
       const result = await service.searchArticles(
         '',
-        EvidenceType.WEAK_AGAINST
+        EvidenceType.WEAK_AGAINST,
       );
 
       expect(mockArticleModel.find).toHaveBeenCalledWith(
         expect.objectContaining({
           status: ArticleStatus.APPROVED,
           evidence: EvidenceType.WEAK_AGAINST,
-        })
+        }),
       );
       expect(result).toEqual(mockArticles);
     });
@@ -155,7 +155,7 @@ describe('ArticleService', () => {
         'createdAt',
         'desc',
         '2019',
-        '2021'
+        '2021',
       );
 
       expect(mockArticleModel.find).toHaveBeenCalledWith(
@@ -165,7 +165,7 @@ describe('ArticleService', () => {
             $gte: '2019',
             $lte: '2021',
           }),
-        })
+        }),
       );
       expect(result).toEqual(mockArticles);
     });
@@ -197,14 +197,14 @@ describe('ArticleService', () => {
         'desc',
         undefined,
         undefined,
-        'John Doe'
+        'John Doe',
       );
 
       expect(mockArticleModel.find).toHaveBeenCalledWith(
         expect.objectContaining({
           status: ArticleStatus.APPROVED,
           authors: expect.any(RegExp),
-        })
+        }),
       );
       expect(result).toEqual(mockArticles);
     });
@@ -238,14 +238,14 @@ describe('ArticleService', () => {
         undefined,
         undefined,
         undefined,
-        'Journal'
+        'Journal',
       );
 
       expect(mockArticleModel.find).toHaveBeenCalledWith(
         expect.objectContaining({
           status: ArticleStatus.APPROVED,
           source: expect.any(RegExp),
-        })
+        }),
       );
       expect(result).toEqual(mockArticles);
     });
@@ -279,7 +279,7 @@ describe('ArticleService', () => {
         '2021',
         'John',
         ArticleStatus.APPROVED,
-        'Journal'
+        'Journal',
       );
 
       expect(mockArticleModel.find).toHaveBeenCalledWith(
@@ -295,7 +295,7 @@ describe('ArticleService', () => {
           }),
           authors: expect.any(RegExp),
           source: expect.any(RegExp),
-        })
+        }),
       );
       expect(result).toEqual(mockArticles);
     });
@@ -372,14 +372,21 @@ describe('ArticleService', () => {
       (mockArticleModel.exec as jest.Mock).mockResolvedValue(mockArticles);
 
       // Test with invalid year values that will result in NaN when parsed
-      await service.searchArticles('', undefined, 'createdAt', 'desc', 'abc', 'def');
+      await service.searchArticles(
+        '',
+        undefined,
+        'createdAt',
+        'desc',
+        'abc',
+        'def',
+      );
 
       // Should only add filters for valid years, so pubyear should be empty object
       expect(mockArticleModel.find).toHaveBeenCalledWith(
         expect.objectContaining({
           status: ArticleStatus.APPROVED,
           pubyear: expect.any(Object),
-        })
+        }),
       );
     });
   });
@@ -437,7 +444,9 @@ describe('ArticleService', () => {
 
       const result = await service.findAll();
 
-      expect(mockArticleModel.find).toHaveBeenCalledWith({ status: ArticleStatus.APPROVED });
+      expect(mockArticleModel.find).toHaveBeenCalledWith({
+        status: ArticleStatus.APPROVED,
+      });
       expect(mockArticleModel.sort).toHaveBeenCalledWith({ createdAt: -1 });
       expect(result).toEqual(mockArticles);
     });
@@ -463,7 +472,9 @@ describe('ArticleService', () => {
 
       const result = await service.findAll(ArticleStatus.PENDING);
 
-      expect(mockArticleModel.find).toHaveBeenCalledWith({ status: ArticleStatus.PENDING });
+      expect(mockArticleModel.find).toHaveBeenCalledWith({
+        status: ArticleStatus.PENDING,
+      });
       expect(mockArticleModel.sort).toHaveBeenCalledWith({ createdAt: -1 });
       expect(result).toEqual(mockArticles);
     });
@@ -488,7 +499,9 @@ describe('ArticleService', () => {
 
       const result = await service.findArticlesBySimilarDOI('10.1000/test-doi');
 
-      expect(mockArticleModel.find).toHaveBeenCalledWith({ doi: '10.1000/test-doi' });
+      expect(mockArticleModel.find).toHaveBeenCalledWith({
+        doi: '10.1000/test-doi',
+      });
       expect(result).toEqual([mockArticle]);
     });
 
@@ -508,7 +521,10 @@ describe('ArticleService', () => {
       (mockArticleModel.find as jest.Mock).mockReturnThis();
       (mockArticleModel.exec as jest.Mock).mockResolvedValue([mockArticle]);
 
-      const result = await service.findArticlesBySimilarDOI('10.1000/test-doi', '1');
+      const result = await service.findArticlesBySimilarDOI(
+        '10.1000/test-doi',
+        '1',
+      );
 
       expect(mockArticleModel.find).toHaveBeenCalledWith({
         doi: '10.1000/test-doi',
@@ -544,8 +560,15 @@ describe('ArticleService', () => {
       // First call: find with doi field (exact match) returns empty
       // Second call: find with regex query (similar match) returns mock article
       findMock
-        .mockImplementationOnce(() => ({ ...mockChain, exec: jest.fn().mockResolvedValue([]) })) // Exact match returns []
-        .mockImplementationOnce(() => ({ ...mockChain, limit: jest.fn().mockReturnThis(), exec: jest.fn().mockResolvedValue([mockArticle]) })); // Similar match returns article
+        .mockImplementationOnce(() => ({
+          ...mockChain,
+          exec: jest.fn().mockResolvedValue([]),
+        })) // Exact match returns []
+        .mockImplementationOnce(() => ({
+          ...mockChain,
+          limit: jest.fn().mockReturnThis(),
+          exec: jest.fn().mockResolvedValue([mockArticle]),
+        })); // Similar match returns article
 
       const result = await service.findArticlesBySimilarDOI('10.1000/test-doi');
 
@@ -572,19 +595,24 @@ describe('ArticleService', () => {
       };
 
       // Mock the model.find to return our chain
-      const findSpy = jest.spyOn(mockArticleModel, 'find').mockImplementation((query) => {
-        if (query.doi && typeof query.doi === 'string') {
-          // This is the exact match query
-          mockChain.exec = jest.fn().mockResolvedValue([]);
-        } else if (query.doi && query.doi.$regex) {
-          // This is the similar match query
-          mockChain.limit = jest.fn().mockReturnThis();
-          mockChain.exec = jest.fn().mockResolvedValue([mockArticle]);
-        }
-        return mockChain;
-      });
+      const findSpy = jest
+        .spyOn(mockArticleModel, 'find')
+        .mockImplementation((query) => {
+          if (query.doi && typeof query.doi === 'string') {
+            // This is the exact match query
+            mockChain.exec = jest.fn().mockResolvedValue([]);
+          } else if (query.doi && query.doi.$regex) {
+            // This is the similar match query
+            mockChain.limit = jest.fn().mockReturnThis();
+            mockChain.exec = jest.fn().mockResolvedValue([mockArticle]);
+          }
+          return mockChain;
+        });
 
-      const result = await service.findArticlesBySimilarDOI('10.1000/test-doi', '1');
+      const result = await service.findArticlesBySimilarDOI(
+        '10.1000/test-doi',
+        '1',
+      );
 
       expect(findSpy).toHaveBeenCalledWith({
         doi: '10.1000/test-doi',
@@ -606,19 +634,23 @@ describe('ArticleService', () => {
       };
 
       // Mock the model.find to return our chain
-      const findSpy = jest.spyOn(mockArticleModel, 'find').mockImplementation((query) => {
-        if (query.doi && typeof query.doi === 'string') {
-          // This is the exact match query
-          mockChain.exec = jest.fn().mockResolvedValue([]);
-        } else if (query.doi && query.doi.$regex) {
-          // This is the similar match query
-          mockChain.limit = jest.fn().mockReturnThis();
-          mockChain.exec = jest.fn().mockResolvedValue([]);
-        }
-        return mockChain;
-      });
+      const findSpy = jest
+        .spyOn(mockArticleModel, 'find')
+        .mockImplementation((query) => {
+          if (query.doi && typeof query.doi === 'string') {
+            // This is the exact match query
+            mockChain.exec = jest.fn().mockResolvedValue([]);
+          } else if (query.doi && query.doi.$regex) {
+            // This is the similar match query
+            mockChain.limit = jest.fn().mockReturnThis();
+            mockChain.exec = jest.fn().mockResolvedValue([]);
+          }
+          return mockChain;
+        });
 
-      const result = await service.findArticlesBySimilarDOI('10.1000/nonexistent-doi');
+      const result = await service.findArticlesBySimilarDOI(
+        '10.1000/nonexistent-doi',
+      );
 
       expect(result).toEqual([]);
       findSpy.mockRestore();

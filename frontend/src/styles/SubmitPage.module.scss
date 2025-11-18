@@ -69,14 +69,16 @@
   border: 1px solid #d1d5db;
   border-radius: 4px;
   font-size: 0.875rem;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+
   &:focus {
     outline: none;
     border-color: #3b82f6; // Blue focus border
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); // Blue focus ring
   }
-  
+
   &.error {
     border-color: #ef4444; // Red border for errors
   }
@@ -101,11 +103,11 @@
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.15s;
-  
+
   &:hover:not(:disabled) {
     background-color: #2563eb; // Darker blue on hover
   }
-  
+
   &:disabled {
     background-color: #9ca3af; // Gray when disabled
     cursor: not-allowed;
@@ -117,13 +119,13 @@
   border-radius: 4px;
   margin-bottom: 1rem;
   font-size: 0.875rem;
-  
+
   &.success {
     background-color: #d1fae5; // Light green background
     color: #065f46; // Dark green text
     border: 1px solid #a7f3d0; // Green border
   }
-  
+
   &.error {
     background-color: #fee2e2; // Light red background
     color: #b91c1c; // Dark red text

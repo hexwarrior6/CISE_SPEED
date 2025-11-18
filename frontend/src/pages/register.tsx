@@ -36,7 +36,7 @@ const RegisterPage = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(registerData),
-        }
+        },
       );
 
       if (response.ok) {
@@ -56,8 +56,14 @@ const RegisterPage = () => {
 
   return (
     <div className="container">
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh', padding: '2rem 0' }}>
-        <div className={formStyles.form} style={{ width: '100%', maxWidth: '400px' }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "80vh", padding: "2rem 0" }}
+      >
+        <div
+          className={formStyles.form}
+          style={{ width: "100%", maxWidth: "400px" }}
+        >
           <h1 className="text-center mb-lg">Register</h1>
           <form onSubmit={handleRegister}>
             <div className={formStyles.formGroup}>
@@ -140,7 +146,7 @@ const RegisterPage = () => {
               type="submit"
               disabled={loading}
             >
-              {loading ? 'Registering...' : 'Register'}
+              {loading ? "Registering..." : "Register"}
             </button>
           </form>
 

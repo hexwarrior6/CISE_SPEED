@@ -1,17 +1,17 @@
 // Enum for article status
 export enum ArticleStatus {
-  PENDING = 'Pending',
-  APPROVED = 'Approved',
-  REJECTED = 'Rejected',
+  PENDING = "Pending",
+  APPROVED = "Approved",
+  REJECTED = "Rejected",
 }
 
 // Enum for evidence types
 export enum EvidenceType {
-  WEAK_AGAINST = 'Weak Against',
-  MODERATELY_AGAINST = 'Moderately Against',
-  NEUTRAL = 'Neutral',
-  MODERATELY_SUPPORTS = 'Moderately Supports',
-  STRONGLY_SUPPORTS = 'Strongly Supports',
+  WEAK_AGAINST = "Weak Against",
+  MODERATELY_AGAINST = "Moderately Against",
+  NEUTRAL = "Neutral",
+  MODERATELY_SUPPORTS = "Moderately Supports",
+  STRONGLY_SUPPORTS = "Strongly Supports",
 }
 
 // Article interface
@@ -31,13 +31,14 @@ export interface Article {
   submitterEmail?: string;
   reviewerId?: string;
   reviewComment?: string;
+  averageRating?: number;
   createdAt?: string;
   updatedAt?: string;
 }
 
 // Review data interface
 export interface ReviewData {
-  status: 'Approved' | 'Rejected';
+  status: "Approved" | "Rejected";
   reviewComment?: string;
   isDuplicate?: boolean;
   duplicateOf?: string;
