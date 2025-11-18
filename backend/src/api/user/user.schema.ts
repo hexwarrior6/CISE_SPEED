@@ -33,6 +33,19 @@ export class User {
 
   @Prop()
   lastName?: string;
+
+  // 添加评分记录字段
+  @Prop({
+    type: [
+      {
+        articleId: String,
+        rating: Number,
+        ratedAt: { type: Date, default: Date.now },
+      },
+    ],
+    default: [],
+  })
+  ratings: Array<{ articleId: string; rating: number; ratedAt?: Date }>;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

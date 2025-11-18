@@ -62,6 +62,12 @@ export class Article {
   @Prop()
   isDuplicate?: boolean;
 
+  @Prop({ type: [{ userId: String, rating: Number }], default: [] })
+  ratings: Array<{ userId: string; rating: number }>;
+
+  @Prop({ type: Number, default: 0 })
+  averageRating: number;
+
   @Prop()
   duplicateOf?: string; // Reference to the original article's customId
 }
