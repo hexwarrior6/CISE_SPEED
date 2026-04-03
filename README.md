@@ -63,8 +63,8 @@ The application follows a modern full-stack architecture:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/CISE_SPEED.git
-cd CISE_SPEED
+git clone https://github.com/your-username/cise-speed.git
+cd cise-speed
 ```
 
 ### 2. Set Up Environment Variables
@@ -167,7 +167,7 @@ npm run test:coverage
 ## 🏗️ Project Structure
 
 ```
-CISE_SPEED/
+cise-speed/
 ├── backend/                      # NestJS API server
 │   ├── src/
 │   │   ├── api/                  # API modules (article, user)
@@ -245,7 +245,7 @@ We welcome contributions to the CISE_SPEED project! Here's how you can help:
 
 If you encounter any issues or have questions about the project:
 
-1. Check the existing [Issues](https://github.com/your-username/CISE_SPEED/issues) to see if it's already reported
+1. Check the existing [Issues](https://github.com/hexwarrior6/cise-speed/issues) to see if it's already reported
 2. If not, open a new issue with detailed information about the problem
 3. For feature requests, please open an issue describing the proposed feature
 
